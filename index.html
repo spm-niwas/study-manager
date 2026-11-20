@@ -1248,6 +1248,598 @@
             );
         }
 
+        // =========================================================================
+        // UI, ROLE ROUTING & PRODUCTION MODE CONTROLLER
+        // =========================================================================
+        const SUPER_ADMIN_EMAIL = 'director@spmniwas.in';
+        let currentUserSession = null;
+        let selectedStudentSem = 'I';
+        let activeStudentFilterSem = 'ALL';
+        let pendingDeleteTeacherId = null;
+        let pendingDeleteStudentId = null;
+
+        /**
+         * Detects if running in Production (e.g., GitHub Pages / standalone host) vs Design Canvas.
+         * In Production, hides All Screens gallery & switcher and opens directly into the mobile frame.
+         */
+        function applyEnvironmentMode() {
+            const params = new URLSearchParams(window.location.search);
+            const forceDesign = params.get('design') === 'true';
+            const forceProd = params.get('prod') === 'true';
+            const isPreviewIframe = window.self !== window.top && window.location.hostname === '';
+            const isProduction = forceProd || (!forceDesign && !isPreviewIframe && !window.location.hostname.includes('usercontent'));
+
+            const singleView = document.getElementById('single-view-container');
+            const galleryView = document.getElementById('all-screens-gallery');
+            const dropdownWrapper = document.getElementById('all-screens-dropdown-wrapper');
+
+            if (isProduction) {
+                document.body.classList.add('production-mode');
+                if (galleryView) galleryView.classList.add('hidden');
+                if (dropdownWrapper) dropdownWrapper.classList.add('hidden');
+                if (singleView) singleView.classList.remove('hidden');
+                window.switchScreen('login');
+            } else {
+                document.body.classList.remove('production-mode');
+                if (singleView) singleView.classList.add('hidden');
+                if (galleryView) galleryView.classList.remove('hidden');
+                if (dropdownWrapper) dropdownWrapper.classList.remove('hidden');
+            }
+        }
+
+        function isAllowedGoogleDomain(email) {
+            const parts = email.toLowerCase().trim().split('@');
+            if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
+            const domain = parts[1];
+            const blockedConsumer = ['yahoo.com', 'hotmail.com', 'outlook.com', 'live.com', 'icloud.com', 'aol.com', 'proton.me', 'protonmail.com', 'rediffmail.com'];
+            return !blockedConsumer.includes(domain) && domain.includes('.');
+        }
+
+        function showFeedback(elId, type, message) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            const styles = {
+                error: 'bg-rose-50 border-rose-200 text-rose-700',
+                success: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                info: 'bg-indigo-50 border-indigo-200 text-indigo-700'
+            };
+            el.className = `rounded-xl border px-3.5 py-2.5 text-xs font-medium ${styles[type] || styles.info}`;
+            el.textContent = message;
+            el.classList.remove('hidden');
+        }
+
+        function hideFeedback(elId) {
+            const el = document.getElementById(elId);
+            if (el) el.classList.add('hidden');
+        }
+
+        window.switchScreen = function (screenKey) {
+            const screens = [
+                'screen-login',
+                'screen-teacher-dashboard',
+                'screen-teacher-all-students',
+                'screen-admin',
+                'screen-admin-dashboard',
+                'screen-student-dashboard'
+            ];
+            screens.forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            const target = document.getElementById(`screen-${screenKey}`);
+            if (target) target.classList.remove('hidden');
+
+            const singleView = document.getElementById('single-view-container');
+            const galleryView = document.getElementById('all-screens-gallery');
+            if (singleView) singleView.classList.remove('hidden');
+            if (galleryView) galleryView.classList.add('hidden');
+
+            const labels = {
+                'login': 'Common Login • 375 × 812 px',
+                'admin-dashboard': 'Super Admin • 375 × 812 px',
+                'teacher-dashboard': 'Teacher Portal • 375 × 812 px',
+                'teacher-all-students': 'All Added Students • 375 × 812 px',
+                'student-dashboard': 'Student Portal • 375 × 812 px'
+            };
+            const indicator = document.getElementById('screen-indicator');
+            if (indicator && labels[screenKey]) {
+                indicator.textContent = labels[screenKey];
+            }
+
+            closeAllProfileMenus();
+        };
+
+        window.focusScreenFromGallery = function (screenKey) {
+            window.switchScreen(screenKey);
+        };
+
+        window.toggleScreensDropdown = function () {
+            const menu = document.getElementById('user-roles-dropdown');
+            const chevron = document.getElementById('dropdown-chevron');
+            if (!menu) return;
+            const isHidden = menu.classList.contains('hidden');
+            menu.classList.toggle('hidden', !isHidden);
+            if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        };
+
+        window.selectUserRoleFromDropdown = function (roleKey) {
+            const singleView = document.getElementById('single-view-container');
+            const galleryView = document.getElementById('all-screens-gallery');
+            if (singleView) singleView.classList.add('hidden');
+            if (galleryView) galleryView.classList.remove('hidden');
+
+            document.querySelectorAll('[data-role-group]').forEach((group) => {
+                group.classList.toggle('hidden', group.getAttribute('data-role-group') !== roleKey);
+            });
+
+            const roleNames = {
+                login: 'Common Login',
+                admin: 'Super Admin',
+                teacher: 'Teacher',
+                student: 'Student'
+            };
+            const pill = document.getElementById('active-role-pill');
+            if (pill) pill.textContent = roleNames[roleKey] || 'Common Login';
+
+            const title = document.getElementById('role-gallery-title');
+            if (title) title.textContent = `${roleNames[roleKey] || 'Common Login'} Screen${roleKey === 'teacher' ? 's' : ''}`;
+
+            ['login', 'admin', 'teacher', 'student'].forEach((key) => {
+                const item = document.getElementById(`dropdown-item-${key}`);
+                if (!item) return;
+                if (key === roleKey) {
+                    item.classList.add('bg-indigo-50', 'text-indigo-700');
+                    item.classList.remove('text-slate-700');
+                } else {
+                    item.classList.remove('bg-indigo-50', 'text-indigo-700');
+                    item.classList.add('text-slate-700');
+                }
+            });
+
+            const menu = document.getElementById('user-roles-dropdown');
+            const chevron = document.getElementById('dropdown-chevron');
+            if (menu) menu.classList.add('hidden');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+        };
+
+        function updateProfilePopovers(name, email, level) {
+            document.querySelectorAll('[data-profile-name]').forEach((el) => (el.textContent = name));
+            document.querySelectorAll('[data-profile-email]').forEach((el) => (el.textContent = email));
+            document.querySelectorAll('[data-profile-level]').forEach((el) => (el.textContent = level));
+        }
+
+        function closeAllProfileMenus() {
+            document.querySelectorAll('[data-profile-popover]').forEach((p) => p.classList.add('hidden'));
+            document.querySelectorAll('[data-logout-warning]').forEach((w) => w.classList.add('hidden'));
+            document.querySelectorAll('[data-logout-trigger]').forEach((b) => b.classList.remove('hidden'));
+        }
+
+        window.toggleProfileMenu = function (screenId, event) {
+            if (event) event.stopPropagation();
+            const popover = document.getElementById(`profile-popover-${screenId}`);
+            if (!popover) return;
+            const willOpen = popover.classList.contains('hidden');
+            closeAllProfileMenus();
+            if (willOpen) popover.classList.remove('hidden');
+        };
+
+        window.promptLogout = function (screenId) {
+            const popover = document.getElementById(`profile-popover-${screenId}`);
+            if (!popover) return;
+            const trigger = popover.querySelector('[data-logout-trigger]');
+            const warning = popover.querySelector('[data-logout-warning]');
+            if (trigger) trigger.classList.add('hidden');
+            if (warning) warning.classList.remove('hidden');
+        };
+
+        window.cancelLogout = function (screenId) {
+            const popover = document.getElementById(`profile-popover-${screenId}`);
+            if (!popover) return;
+            const trigger = popover.querySelector('[data-logout-trigger]');
+            const warning = popover.querySelector('[data-logout-warning]');
+            if (warning) warning.classList.add('hidden');
+            if (trigger) trigger.classList.remove('hidden');
+        };
+
+        window.confirmLogout = function () {
+            currentUserSession = null;
+            closeAllProfileMenus();
+            hideFeedback('common-auth-feedback');
+            window.switchScreen('login');
+        };
+
+        function routeAuthenticatedEmail(email, displayName) {
+            const normalizedEmail = (email || '').toLowerCase().trim();
+            if (!normalizedEmail) return;
+
+            // 1. Check Super Admin
+            if (normalizedEmail === SUPER_ADMIN_EMAIL) {
+                currentUserSession = { role: 'Super Admin', name: displayName || 'Director', email: normalizedEmail };
+                updateProfilePopovers(currentUserSession.name, currentUserSession.email, 'Super Admin');
+                window.renderAddedTeachers();
+                window.switchScreen('admin-dashboard');
+                return;
+            }
+
+            // 2. Check Authorized Teacher
+            const matchedTeacher = window.addedTeachers.find(
+                (t) => (t.email || '').toLowerCase().trim() === normalizedEmail
+            );
+            if (matchedTeacher) {
+                currentUserSession = { role: 'Teacher', name: matchedTeacher.name || displayName || 'Teacher', email: normalizedEmail };
+                updateProfilePopovers(currentUserSession.name, currentUserSession.email, 'Teacher');
+                const titleEl = document.getElementById('teacher-dashboard-title');
+                if (titleEl) titleEl.textContent = currentUserSession.name;
+                window.renderStudentSearchDropdown();
+                window.switchScreen('teacher-dashboard');
+                return;
+            }
+
+            // 3. Check Authorized Student (strictly added by a teacher)
+            const matchedStudent = window.addedStudents.find(
+                (s) => (s.email || '').toLowerCase().trim() === normalizedEmail
+            );
+            if (matchedStudent) {
+                currentUserSession = {
+                    role: 'Student',
+                    name: matchedStudent.name || displayName || 'Student',
+                    email: normalizedEmail,
+                    semester: matchedStudent.semester || 'I',
+                    addedBy: matchedStudent.addedBy || 'Class Teacher'
+                };
+                updateProfilePopovers(currentUserSession.name, currentUserSession.email, 'Student');
+                const titleEl = document.getElementById('student-dashboard-title');
+                const emailEl = document.getElementById('student-dashboard-email');
+                const teacherEl = document.getElementById('student-dashboard-teacher');
+                const semEl = document.getElementById('student-dashboard-sem');
+                if (titleEl) titleEl.textContent = currentUserSession.name;
+                if (emailEl) emailEl.textContent = currentUserSession.email;
+                if (teacherEl) teacherEl.textContent = currentUserSession.addedBy;
+                if (semEl) semEl.textContent = `Sem ${currentUserSession.semester}`;
+                window.switchScreen('student-dashboard');
+                return;
+            }
+
+            // 4. Unauthorized email
+            showFeedback(
+                'common-auth-feedback',
+                'error',
+                `Access denied for ${normalizedEmail}. Ask your Super Admin or Teacher to add your Google email first.`
+            );
+        }
+
+        window.handleCommonGoogleLogin = async function () {
+            hideFeedback('common-auth-feedback');
+            const btnText = document.getElementById('common-google-btn-text');
+            if (!auth) {
+                showFeedback('common-auth-feedback', 'error', 'Authentication service is still initializing. Please try again.');
+                return;
+            }
+            try {
+                if (btnText) btnText.textContent = 'Signing in with Google...';
+                const provider = new GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: 'select_account' });
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                routeAuthenticatedEmail(user.email, user.displayName);
+            } catch (err) {
+                if (err.code !== 'auth/popup-closed-by-user') {
+                    showFeedback('common-auth-feedback', 'error', err.message || 'Google Sign-In failed. Please try again.');
+                }
+            } finally {
+                if (btnText) btnText.textContent = 'Continue with Google';
+            }
+        };
+
+        window.formatTeacherName = function (input) {
+            if (!input) return;
+            const cursorPos = input.selectionStart;
+            input.value = input.value.replace(/\b\w/g, (ch) => ch.toUpperCase());
+            if (typeof cursorPos === 'number') {
+                input.setSelectionRange(cursorPos, cursorPos);
+            }
+        };
+
+        // Super Admin: Add / Render / Delete Teachers
+        window.handleAddTeacher = async function () {
+            hideFeedback('add-teacher-feedback');
+            const nameInput = document.getElementById('teacher-name-input');
+            const emailInput = document.getElementById('teacher-email-input');
+            const name = (nameInput?.value || '').trim();
+            const email = (emailInput?.value || '').toLowerCase().trim();
+
+            if (!name) {
+                showFeedback('add-teacher-feedback', 'error', 'Please enter the teacher\'s full name.');
+                return;
+            }
+            if (!isAllowedGoogleDomain(email)) {
+                showFeedback('add-teacher-feedback', 'error', 'Please enter a valid @gmail.com or Google Workspace email.');
+                return;
+            }
+            if (email === SUPER_ADMIN_EMAIL || window.addedTeachers.some((t) => t.email === email)) {
+                showFeedback('add-teacher-feedback', 'error', 'This email is already registered.');
+                return;
+            }
+
+            const docId = email.replace(/[^a-z0-9]/g, '_');
+            const teacherObj = { name, email, createdAt: new Date().toISOString() };
+
+            try {
+                if (db) {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId), teacherObj);
+                } else {
+                    window.addedTeachers.push({ id: docId, ...teacherObj });
+                    window.renderAddedTeachers();
+                }
+                if (nameInput) nameInput.value = '';
+                if (emailInput) emailInput.value = '';
+                showFeedback('add-teacher-feedback', 'success', `${name} added successfully.`);
+            } catch (err) {
+                showFeedback('add-teacher-feedback', 'error', `Could not save teacher: ${err.message}`);
+            }
+        };
+
+        window.renderAddedTeachers = function () {
+            const listEl = document.getElementById('added-teachers-list');
+            const badgeEl = document.getElementById('teacher-count-badge');
+            const sorted = [...window.addedTeachers].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+            if (badgeEl) badgeEl.textContent = `${sorted.length} Added`;
+            if (!listEl) return;
+
+            if (sorted.length === 0) {
+                listEl.innerHTML = `<div class="rounded-xl border border-dashed border-slate-200 py-4 px-3 text-center text-xs text-slate-400">No teachers added yet. Fill in Name &amp; Google Email above.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = sorted
+                .map(
+                    (t) => `
+                    <div class="px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-slate-900 truncate">${t.name}</p>
+                            <p class="text-[11px] text-slate-500 truncate">${t.email}</p>
+                        </div>
+                        <button type="button" onclick="promptDeleteTeacher('${t.id}', '${(t.name || '').replace(/'/g, "\\'")}')" title="Remove Teacher" class="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/70 transition cursor-pointer shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>`
+                )
+                .join('');
+        };
+
+        window.promptDeleteTeacher = function (id, name) {
+            pendingDeleteTeacherId = id;
+            const box = document.getElementById('delete-teacher-warning');
+            const text = document.getElementById('delete-warning-text');
+            if (text) text.textContent = `Warning: Remove ${name} from authorized teachers?`;
+            if (box) box.classList.remove('hidden');
+        };
+
+        window.cancelDeleteTeacher = function () {
+            pendingDeleteTeacherId = null;
+            const box = document.getElementById('delete-teacher-warning');
+            if (box) box.classList.add('hidden');
+        };
+
+        window.confirmDeleteTeacher = async function () {
+            if (!pendingDeleteTeacherId) return;
+            const targetId = pendingDeleteTeacherId;
+            window.cancelDeleteTeacher();
+            try {
+                if (db) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', targetId));
+                } else {
+                    window.addedTeachers = window.addedTeachers.filter((t) => t.id !== targetId);
+                    window.renderAddedTeachers();
+                }
+            } catch (err) {
+                showFeedback('add-teacher-feedback', 'error', `Delete failed: ${err.message}`);
+            }
+        };
+
+        // Teacher: Add / Search / Filter / Delete Students
+        window.selectStudentSemester = function (sem) {
+            selectedStudentSem = sem;
+            document.querySelectorAll('#student-sem-buttons button').forEach((btn) => {
+                const isSelected = btn.getAttribute('data-sem') === sem;
+                btn.className = isSelected
+                    ? 'py-2 rounded-xl bg-indigo-600 text-white border border-indigo-600 text-xs font-bold shadow-xs transition cursor-pointer'
+                    : 'py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer';
+            });
+        };
+
+        window.handleAddStudent = async function () {
+            hideFeedback('add-student-feedback');
+            const nameInput = document.getElementById('student-name-input');
+            const emailInput = document.getElementById('student-email-input');
+            const name = (nameInput?.value || '').trim();
+            const email = (emailInput?.value || '').toLowerCase().trim();
+
+            if (!name) {
+                showFeedback('add-student-feedback', 'error', 'Please enter the student\'s full name.');
+                return;
+            }
+            if (!isAllowedGoogleDomain(email)) {
+                showFeedback('add-student-feedback', 'error', 'Please enter a valid @gmail.com or Google Workspace email.');
+                return;
+            }
+            if (window.addedStudents.some((s) => s.email === email)) {
+                showFeedback('add-student-feedback', 'error', 'This student email has already been added.');
+                return;
+            }
+
+            const docId = email.replace(/[^a-z0-9]/g, '_');
+            const addedBy = currentUserSession?.name || 'Teacher';
+            const studentObj = {
+                name,
+                email,
+                semester: selectedStudentSem,
+                addedBy,
+                addedByEmail: currentUserSession?.email || '',
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                if (db) {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId), studentObj);
+                } else {
+                    window.addedStudents.push({ id: docId, ...studentObj });
+                    window.renderStudentSearchDropdown();
+                    window.renderAllStudentsScreen();
+                }
+                if (nameInput) nameInput.value = '';
+                if (emailInput) emailInput.value = '';
+                showFeedback('add-student-feedback', 'success', `${name} (Sem ${selectedStudentSem}) added.`);
+            } catch (err) {
+                showFeedback('add-student-feedback', 'error', `Could not save student: ${err.message}`);
+            }
+        };
+
+        window.openStudentSearchDropdown = function () {
+            const dropdown = document.getElementById('student-search-dropdown');
+            if (dropdown) {
+                window.renderStudentSearchDropdown();
+                dropdown.classList.remove('hidden');
+            }
+        };
+
+        window.renderStudentSearchDropdown = function () {
+            const dropdown = document.getElementById('student-search-dropdown');
+            const badge = document.getElementById('student-count-badge');
+            const query = (document.getElementById('student-search-input')?.value || '').toLowerCase().trim();
+
+            if (badge) badge.textContent = `${window.addedStudents.length} Added`;
+            if (!dropdown) return;
+
+            const filtered = window.addedStudents
+                .filter((s) => (s.name || '').toLowerCase().includes(query) || (s.email || '').toLowerCase().includes(query))
+                .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+            if (filtered.length === 0) {
+                dropdown.innerHTML = `<div class="px-3.5 py-2.5 text-xs text-slate-400 text-center">${window.addedStudents.length === 0 ? 'No students added yet.' : 'No matching students found.'}</div>`;
+                return;
+            }
+
+            dropdown.innerHTML = filtered
+                .map(
+                    (s) => `
+                    <div class="px-3.5 py-2 hover:bg-slate-50 flex items-center justify-between gap-2 border-b border-slate-100 last:border-b-0">
+                        <div class="min-w-0">
+                            <p class="text-xs font-semibold text-slate-900 truncate">${s.name}</p>
+                            <p class="text-[10px] text-slate-500 truncate">${s.email}</p>
+                        </div>
+                        <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full shrink-0">Sem ${s.semester}</span>
+                    </div>`
+                )
+                .join('');
+        };
+
+        window.openAllAddedStudentsScreen = function () {
+            activeStudentFilterSem = 'ALL';
+            window.filterAllStudentsBySemester('ALL');
+            window.switchScreen('teacher-all-students');
+        };
+
+        window.filterAllStudentsBySemester = function (sem) {
+            activeStudentFilterSem = sem;
+            document.querySelectorAll('#all-students-filter-bar button').forEach((btn) => {
+                const isSelected = btn.getAttribute('data-filter') === sem;
+                btn.className = isSelected
+                    ? 'px-3.5 py-1.5 rounded-full bg-indigo-600 text-white text-xs font-bold shadow-xs transition cursor-pointer'
+                    : 'px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer';
+            });
+            window.renderAllStudentsScreen();
+        };
+
+        window.renderAllStudentsScreen = function () {
+            const listEl = document.getElementById('all-students-alphabetical-list');
+            const badgeEl = document.getElementById('all-students-count-badge');
+            const filtered = window.addedStudents
+                .filter((s) => activeStudentFilterSem === 'ALL' || s.semester === activeStudentFilterSem)
+                .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+            if (badgeEl) badgeEl.textContent = `${filtered.length} Shown`;
+            if (!listEl) return;
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-200 py-8 px-4 text-center text-xs text-slate-400">No students found for this selection.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = filtered
+                .map(
+                    (s) => `
+                    <div class="px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-slate-900 truncate">${s.name} - ${s.semester}</p>
+                            <p class="text-[11px] text-slate-500 truncate">${s.email}</p>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">Sem ${s.semester}</span>
+                            <button type="button" onclick="promptDeleteStudent('${s.id}', '${(s.name || '').replace(/'/g, "\\'")}')" title="Delete Student" class="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/70 transition cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>`
+                )
+                .join('');
+        };
+
+        window.promptDeleteStudent = function (id, name) {
+            pendingDeleteStudentId = id;
+            const box = document.getElementById('delete-student-warning');
+            const text = document.getElementById('delete-student-warning-text');
+            if (text) text.textContent = `Warning: Remove ${name} from added students?`;
+            if (box) box.classList.remove('hidden');
+        };
+
+        window.cancelDeleteStudent = function () {
+            pendingDeleteStudentId = null;
+            const box = document.getElementById('delete-student-warning');
+            if (box) box.classList.add('hidden');
+        };
+
+        window.confirmDeleteStudent = async function () {
+            if (!pendingDeleteStudentId) return;
+            const targetId = pendingDeleteStudentId;
+            window.cancelDeleteStudent();
+            try {
+                if (db) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', targetId));
+                } else {
+                    window.addedStudents = window.addedStudents.filter((s) => s.id !== targetId);
+                    window.renderStudentSearchDropdown();
+                    window.renderAllStudentsScreen();
+                }
+            } catch (err) {
+                console.warn('Delete student failed:', err.message);
+            }
+        };
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('[data-profile-popover]')) {
+                closeAllProfileMenus();
+            }
+            const searchWrapper = document.getElementById('student-search-dropdown-wrapper');
+            const searchDropdown = document.getElementById('student-search-dropdown');
+            if (searchWrapper && searchDropdown && !searchWrapper.contains(e.target)) {
+                searchDropdown.classList.add('hidden');
+            }
+            const screensWrapper = document.getElementById('all-screens-dropdown-wrapper');
+            const screensMenu = document.getElementById('user-roles-dropdown');
+            if (screensWrapper && screensMenu && !screensWrapper.contains(e.target)) {
+                screensMenu.classList.add('hidden');
+            }
+        });
+
+        applyEnvironmentMode();
         initFirebaseBackend();
     </script>
 </body>
