@@ -1052,7 +1052,8 @@
         let db = null;
         let auth = null;
         let currentFirebaseUser = null;
-        let isFirestoreReady = false;
+        let unsubscribeTeachers = null;
+        let unsubscribeStudents = null;
 
         // Shared in-memory state synced with Firestore
         window.addedTeachers = [];
@@ -1068,20 +1069,14 @@
                 auth = getAuth(app);
                 db = getFirestore(app);
 
-                // Subscribe to Firestore collections immediately so app works
-                // even before Anonymous Auth is enabled in Firebase Console
-                if (!isFirestoreReady) {
-                    isFirestoreReady = true;
-                    subscribeToCollections();
-                }
-
-                // Attempt anonymous sign-in in the background if enabled in Firebase Console
-                signInAnonymously(auth).catch((authErr) => {
-                    console.info('Anonymous auth not enabled in console; continuing with direct Firestore access.', authErr.code);
-                });
+                // Subscribe on load and re-subscribe whenever auth state changes (e.g. after Google Sign-In)
+                subscribeToCollections();
 
                 onAuthStateChanged(auth, (user) => {
                     currentFirebaseUser = user;
+                    if (user) {
+                        subscribeToCollections();
+                    }
                 });
             } catch (err) {
                 console.error('Firebase initialization error:', err);
@@ -1091,9 +1086,12 @@
         function subscribeToCollections() {
             if (!db) return;
 
+            if (unsubscribeTeachers) unsubscribeTeachers();
+            if (unsubscribeStudents) unsubscribeStudents();
+
             // Public collection path: /artifacts/{appId}/public/data/teachers
             const teachersColRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
-            onSnapshot(teachersColRef, (snapshot) => {
+            unsubscribeTeachers = onSnapshot(teachersColRef, (snapshot) => {
                 const list = [];
                 snapshot.forEach((docSnap) => {
                     list.push({ id: docSnap.id, ...docSnap.data() });
@@ -1105,12 +1103,16 @@
                     window.renderAddedTeachers();
                 }
             }, (error) => {
-                console.error('Error listening to teachers collection:', error);
+                if (error.code === 'permission-denied') {
+                    console.info('Firestore teachers read waiting for Firestore Security Rules or Google Sign-In.');
+                } else {
+                    console.error('Error listening to teachers collection:', error);
+                }
             });
 
             // Public collection path: /artifacts/{appId}/public/data/students
             const studentsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-            onSnapshot(studentsColRef, (snapshot) => {
+            unsubscribeStudents = onSnapshot(studentsColRef, (snapshot) => {
                 const list = [];
                 snapshot.forEach((docSnap) => {
                     list.push({ id: docSnap.id, ...docSnap.data() });
@@ -1125,259 +1127,10 @@
                     window.renderAllStudentsScreen();
                 }
             }, (error) => {
-                console.error('Error listening to students collection:', error);
-            });
-        }
-
-        // Expose Firestore CRUD helpers globally for UI actions
-        window.firestoreSaveTeacher = async function(teacherObj) {
-            if (!db) {
-                window.addedTeachers.unshift(teacherObj);
-                return;
-            }
-            const safeDocId = teacherObj.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const teacherDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'teachers', safeDocId);
-            await setDoc(teacherDocRef, {
-                ...teacherObj,
-                createdAt: Date.now()
-            });
-        };
-
-        window.firestoreDeleteTeacher = async function(teacherObj) {
-            if (!db) return;
-            const docId = teacherObj.id || teacherObj.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const teacherDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId);
-            await deleteDoc(teacherDocRef);
-        };
-
-        window.firestoreSaveStudent = async function(studentObj) {
-            if (!db) {
-                window.addedStudents.unshift(studentObj);
-                return;
-            }
-            const safeDocId = studentObj.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const studentDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', safeDocId);
-            await setDoc(studentDocRef, {
-                ...studentObj,
-                createdAt: Date.now()
-            });
-        };
-
-        window.firestoreDeleteStudent = async function(studentObj) {
-            if (!db) return;
-            const docId = studentObj.id || studentObj.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const studentDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', docId);
-            await deleteDoc(studentDocRef);
-        };
-
-        window.triggerRealGoogleSignIn = async function() {
-            if (!auth) return null;
-            try {
-                const provider = new GoogleAuthProvider();
-                const result = await signInWithPopup(auth, provider);
-                return result.user?.email || null;
-            } catch (err) {
-                console.warn('Google popup sign-in fallback:', err.message);
-                return null;
-            }
-        };
-
-        initFirebaseBackend();
-    </script>
-
-    <script>
-        let isGalleryView = true;
-        let activeRole = 'login';
-        let isDropdownOpen = false;
-
-        /**
-         * Opens or closes the user-wise dropdown menu attached to the All Screens button.
-         */
-        function toggleScreensDropdown(forceState) {
-            const dropdown = document.getElementById('user-roles-dropdown');
-            const chevron = document.getElementById('dropdown-chevron');
-            isDropdownOpen = typeof forceState === 'boolean' ? forceState : !isDropdownOpen;
-
-            if (isDropdownOpen) {
-                dropdown.classList.remove('hidden');
-                chevron.classList.add('rotate-180');
-            } else {
-                dropdown.classList.add('hidden');
-                chevron.classList.remove('rotate-180');
-            }
-        }
-
-        // Close dropdown when clicking anywhere outside
-        document.addEventListener('click', (event) => {
-            const wrapper = document.getElementById('all-screens-dropdown-wrapper');
-            if (wrapper && !wrapper.contains(event.target) && isDropdownOpen) {
-                toggleScreensDropdown(false);
-            }
-            const studentSearchWrapper = document.getElementById('student-search-dropdown-wrapper');
-            const studentSearchDropdown = document.getElementById('student-search-dropdown');
-            if (studentSearchWrapper && studentSearchDropdown && !studentSearchWrapper.contains(event.target)) {
-                studentSearchDropdown.classList.add('hidden');
-            }
-            if (!event.target.closest('[data-profile-popover]')) {
-                closeAllProfilePopovers();
-            }
-        });
-
-        let currentUserProfile = {
-            name: 'Director',
-            email: 'director@spmniwas.in',
-            level: 'Super Admin'
-        };
-
-        /**
-         * Updates the visible profile popover details across logged-in screens.
-         */
-        function syncProfilePopoverUI() {
-            document.querySelectorAll('[data-profile-popover]').forEach(popover => {
-                const nameEl = popover.querySelector('[data-profile-name]');
-                const emailEl = popover.querySelector('[data-profile-email]');
-                const levelEl = popover.querySelector('[data-profile-level]');
-                if (nameEl) nameEl.textContent = currentUserProfile.name;
-                if (emailEl) emailEl.textContent = currentUserProfile.email;
-                if (levelEl) levelEl.textContent = currentUserProfile.level;
-            });
-        }
-
-        /**
-         * Closes all open gear-icon profile popovers and resets any logout confirmation prompts.
-         */
-        function closeAllProfilePopovers() {
-            document.querySelectorAll('[data-profile-popover]').forEach(popover => {
-                popover.classList.add('hidden');
-                const trigger = popover.querySelector('[data-logout-trigger]');
-                const warning = popover.querySelector('[data-logout-warning]');
-                if (trigger) trigger.classList.remove('hidden');
-                if (warning) warning.classList.add('hidden');
-            });
-        }
-
-        /**
-         * Toggles the top-right gear icon account popover on a logged-in screen.
-         * @param {string} screenKey
-         * @param {Event} event
-         */
-        function toggleProfileMenu(screenKey, event) {
-            if (event) event.stopPropagation();
-            const popover = document.getElementById(`profile-popover-${screenKey}`);
-            if (!popover) return;
-
-            const isHidden = popover.classList.contains('hidden');
-            closeAllProfilePopovers();
-
-            if (isHidden) {
-                // Set sensible default profile if opened directly from gallery preview
-                if (screenKey === 'admin-dashboard' && currentUserProfile.level !== 'Super Admin') {
-                    currentUserProfile = { name: 'Director', email: 'director@spmniwas.in', level: 'Super Admin' };
-                } else if ((screenKey === 'teacher-dashboard' || screenKey === 'teacher-all-students') && currentUserProfile.level !== 'Teacher') {
-                    const fallbackTeacher = window.addedTeachers[0] || { name: 'Teacher', email: 'teacher@gmail.com' };
-                    currentUserProfile = { name: fallbackTeacher.name, email: fallbackTeacher.email, level: 'Teacher' };
-                } else if (screenKey === 'student-dashboard' && currentUserProfile.level !== 'Student') {
-                    const fallbackStudent = window.addedStudents[0] || { name: 'Student', email: 'student@gmail.com' };
-                    currentUserProfile = { name: fallbackStudent.name, email: fallbackStudent.email, level: 'Student' };
-                }
-                syncProfilePopoverUI();
-                popover.classList.remove('hidden');
-            }
-        }
-
-        /**
-         * Shows the amber confirmation warning inside the profile popover before logging out.
-         * @param {string} screenKey
-         */
-        function promptLogout(screenKey) {
-            const popover = document.getElementById(`profile-popover-${screenKey}`);
-            if (!popover) return;
-            const trigger = popover.querySelector('[data-logout-trigger]');
-            const warning = popover.querySelector('[data-logout-warning]');
-            if (trigger) trigger.classList.add('hidden');
-            if (warning) warning.classList.remove('hidden');
-        }
-
-        /**
-         * Cancels the logout warning and restores the Logout button inside the popover.
-         * @param {string} screenKey
-         */
-        function cancelLogout(screenKey) {
-            const popover = document.getElementById(`profile-popover-${screenKey}`);
-            if (!popover) return;
-            const trigger = popover.querySelector('[data-logout-trigger]');
-            const warning = popover.querySelector('[data-logout-warning]');
-            if (warning) warning.classList.add('hidden');
-            if (trigger) trigger.classList.remove('hidden');
-        }
-
-        /**
-         * Confirms logout and returns the user to the Common Login screen.
-         */
-        function confirmLogout() {
-            closeAllProfilePopovers();
-            logoutToCommonLogin();
-        }
-
-        /**
-         * Handles selecting a user role (Super Admin, Teacher, or Student) from the All Screens dropdown.
-         * Displays all screens belonging to that user role.
-         * @param {'admin' | 'teacher' | 'student'} role
-         */
-        function selectUserRoleFromDropdown(role) {
-            activeRole = role;
-            toggleScreensDropdown(false);
-
-            // Ensure gallery view is active so all screens of that user are shown
-            const singleView = document.getElementById('single-view-container');
-            const galleryView = document.getElementById('all-screens-gallery');
-            singleView.classList.add('hidden');
-            galleryView.classList.remove('hidden');
-            isGalleryView = true;
-
-            selectUserRoleView(role);
-        }
-
-        /**
-         * Switches the User-Wise Gallery View to display only screens belonging to the selected user role.
-         * @param {'login' | 'admin' | 'teacher' | 'student'} role - The user role whose screens should be displayed.
-         */
-        function selectUserRoleView(role) {
-            activeRole = role;
-
-            // Update role groups visibility
-            document.querySelectorAll('[data-role-group]').forEach(group => {
-                if (group.getAttribute('data-role-group') === role) {
-                    group.classList.remove('hidden');
+                if (error.code === 'permission-denied') {
+                    console.info('Firestore students read waiting for Firestore Security Rules or Google Sign-In.');
                 } else {
-                    group.classList.add('hidden');
-                }
-            });
-
-            const roleLabels = {
-                login: 'Common Login',
-                admin: 'Super Admin',
-                teacher: 'Teacher',
-                student: 'Student'
-            };
-
-            // Update gallery title & floating pill badge
-            const titleEl = document.getElementById('role-gallery-title');
-            const activePill = document.getElementById('active-role-pill');
-            if (titleEl) titleEl.textContent = role === 'login' ? 'Common Login Screen' : `${roleLabels[role]} Screens`;
-            if (activePill) activePill.textContent = roleLabels[role];
-
-            // Update active item styling inside the dropdown
-            ['login', 'admin', 'teacher', 'student'].forEach(r => {
-                const item = document.getElementById(`dropdown-item-${r}`);
-                if (!item) return;
-                const countBadge = item.querySelector('span:last-child');
-                if (r === role) {
-                    item.className = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold bg-indigo-50 text-indigo-700 transition cursor-pointer mt-0.5';
-                    countBadge.className = 'text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700';
-                } else {
-                    item.className = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer mt-0.5';
-                    countBadge.className = 'text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500';
+                    console.error('Error listening to students collection:', error);
                 }
             });
         }
