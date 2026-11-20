@@ -80,22 +80,6 @@
                             <span id="common-google-btn-text">Continue with Google</span>
                         </button>
 
-                        <!-- Quick Role Account Switcher for Prototype Testing -->
-                        <div class="pt-1">
-                            <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 text-center mb-2">Simulate Google Account</p>
-                            <div class="grid grid-cols-3 gap-1.5">
-                                <button type="button" onclick="handleCommonGoogleLogin('director@spmniwas.in')" class="py-2 px-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[11px] font-semibold border border-indigo-200/70 transition cursor-pointer">
-                                    Super Admin
-                                </button>
-                                <button type="button" onclick="handleCommonGoogleLogin('teacher')" class="py-2 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-semibold border border-amber-200/70 transition cursor-pointer">
-                                    Teacher
-                                </button>
-                                <button type="button" onclick="handleCommonGoogleLogin('student')" class="py-2 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] font-semibold border border-emerald-200/70 transition cursor-pointer">
-                                    Student
-                                </button>
-                            </div>
-                        </div>
-
                         <div id="common-auth-feedback" class="hidden"></div>
                     </div>
                 </div>
@@ -1721,6 +1705,244 @@
                 </div>
             `).join('');
         }
+
+        // Firestore Persistence & Google Auth Helpers
+        window.firestoreSaveTeacher = async function (teacher) {
+            if (!db) {
+                window.addedTeachers.unshift(teacher);
+                return;
+            }
+            const docId = teacher.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const teacherRef = doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId);
+            await setDoc(teacherRef, {
+                name: teacher.name,
+                email: teacher.email.toLowerCase(),
+                createdAt: Date.now()
+            });
+        };
+
+        window.firestoreDeleteTeacher = async function (teacher) {
+            if (!db) {
+                window.addedTeachers = window.addedTeachers.filter(t => t.email !== teacher.email);
+                return;
+            }
+            const docId = (teacher.id || teacher.email.toLowerCase().replace(/[^a-z0-9]/g, '_'));
+            const teacherRef = doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId);
+            await deleteDoc(teacherRef);
+        };
+
+        window.firestoreSaveStudent = async function (student) {
+            if (!db) {
+                window.addedStudents.unshift(student);
+                return;
+            }
+            const docId = student.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const studentRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', docId);
+            await setDoc(studentRef, {
+                name: student.name,
+                email: student.email.toLowerCase(),
+                semester: student.semester,
+                addedBy: student.addedBy || 'Teacher',
+                createdAt: Date.now()
+            });
+        };
+
+        window.firestoreDeleteStudent = async function (student) {
+            if (!db) {
+                window.addedStudents = window.addedStudents.filter(s => s.email !== student.email);
+                return;
+            }
+            const docId = (student.id || student.email.toLowerCase().replace(/[^a-z0-9]/g, '_'));
+            const studentRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', docId);
+            await deleteDoc(studentRef);
+        };
+
+        window.triggerRealGoogleSignIn = async function () {
+            if (!auth) return null;
+            try {
+                const provider = new GoogleAuthProvider();
+                const result = await signInWithPopup(auth, provider);
+                return result.user ? result.user.email : null;
+            } catch (err) {
+                console.warn('Google Sign-In popup notice:', err.message);
+                return null;
+            }
+        };
+
+        // Gallery & Navigation State
+        let activeRole = 'login';
+        let isGalleryView = true;
+
+        let currentUserProfile = {
+            name: 'Director',
+            email: 'director@spmniwas.in',
+            level: 'Super Admin'
+        };
+
+        function syncProfilePopoverUI() {
+            document.querySelectorAll('[data-profile-name]').forEach(el => el.textContent = currentUserProfile.name);
+            document.querySelectorAll('[data-profile-email]').forEach(el => el.textContent = currentUserProfile.email);
+            document.querySelectorAll('[data-profile-level]').forEach(el => el.textContent = currentUserProfile.level);
+        }
+
+        function closeAllProfileMenus() {
+            document.querySelectorAll('[data-profile-popover]').forEach(pop => {
+                pop.classList.add('hidden');
+                const trigger = pop.querySelector('[data-logout-trigger]');
+                const warning = pop.querySelector('[data-logout-warning]');
+                if (trigger) trigger.classList.remove('hidden');
+                if (warning) warning.classList.add('hidden');
+            });
+        }
+
+        function toggleProfileMenu(screenKey, event) {
+            if (event) event.stopPropagation();
+            const popover = document.getElementById(`profile-popover-${screenKey}`);
+            if (!popover) return;
+            const wasHidden = popover.classList.contains('hidden');
+            closeAllProfileMenus();
+            if (wasHidden) {
+                syncProfilePopoverUI();
+                popover.classList.remove('hidden');
+            }
+        }
+
+        function promptLogout(screenKey) {
+            const popover = document.getElementById(`profile-popover-${screenKey}`);
+            if (!popover) return;
+            const trigger = popover.querySelector('[data-logout-trigger]');
+            const warning = popover.querySelector('[data-logout-warning]');
+            if (trigger) trigger.classList.add('hidden');
+            if (warning) warning.classList.remove('hidden');
+        }
+
+        function cancelLogout(screenKey) {
+            const popover = document.getElementById(`profile-popover-${screenKey}`);
+            if (!popover) return;
+            const trigger = popover.querySelector('[data-logout-trigger]');
+            const warning = popover.querySelector('[data-logout-warning]');
+            if (warning) warning.classList.add('hidden');
+            if (trigger) trigger.classList.remove('hidden');
+        }
+
+        function confirmLogout() {
+            closeAllProfileMenus();
+            logoutToCommonLogin();
+        }
+
+        function toggleScreensDropdown() {
+            const menu = document.getElementById('user-roles-dropdown');
+            const chevron = document.getElementById('dropdown-chevron');
+            menu.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180');
+        }
+
+        function selectUserRoleFromDropdown(role) {
+            activeRole = role;
+            const gallery = document.getElementById('all-screens-gallery');
+            const single = document.getElementById('single-view-container');
+            const rolePill = document.getElementById('active-role-pill');
+            const galleryTitle = document.getElementById('role-gallery-title');
+
+            single.classList.add('hidden');
+            gallery.classList.remove('hidden');
+            isGalleryView = true;
+
+            document.querySelectorAll('[data-role-group]').forEach(group => {
+                if (group.getAttribute('data-role-group') === role) {
+                    group.classList.remove('hidden');
+                } else {
+                    group.classList.add('hidden');
+                }
+            });
+
+            const roleLabels = {
+                login: { pill: 'Common Login', title: 'Common Login Screen' },
+                admin: { pill: 'Super Admin', title: 'Super Admin Screen' },
+                teacher: { pill: 'Teacher', title: 'Teacher Screens (2)' },
+                student: { pill: 'Student', title: 'Student Screen' }
+            };
+            rolePill.textContent = roleLabels[role].pill;
+            galleryTitle.textContent = roleLabels[role].title;
+
+            ['login', 'admin', 'teacher', 'student'].forEach(r => {
+                const item = document.getElementById(`dropdown-item-${r}`);
+                const countBadge = item.querySelector('span:last-child');
+                if (r === role) {
+                    item.className = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold bg-indigo-50 text-indigo-700 transition cursor-pointer mt-0.5';
+                    countBadge.className = 'text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700';
+                } else {
+                    item.className = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer mt-0.5';
+                    countBadge.className = 'text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500';
+                }
+            });
+
+            document.getElementById('user-roles-dropdown').classList.add('hidden');
+            document.getElementById('dropdown-chevron').classList.remove('rotate-180');
+        }
+
+        function openStudentSearchDropdown() {
+            const dropdown = document.getElementById('student-search-dropdown');
+            if (dropdown) {
+                renderStudentSearchDropdown();
+                dropdown.classList.remove('hidden');
+            }
+        }
+
+        document.addEventListener('click', (event) => {
+            const wrapper = document.getElementById('all-screens-dropdown-wrapper');
+            const menu = document.getElementById('user-roles-dropdown');
+            const chevron = document.getElementById('dropdown-chevron');
+            if (wrapper && !wrapper.contains(event.target) && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+
+            const studentSearchWrapper = document.getElementById('student-search-dropdown-wrapper');
+            const studentSearchDropdown = document.getElementById('student-search-dropdown');
+            if (studentSearchWrapper && studentSearchDropdown && !studentSearchWrapper.contains(event.target)) {
+                studentSearchDropdown.classList.add('hidden');
+            }
+
+            if (!event.target.closest('[data-profile-popover]')) {
+                closeAllProfileMenus();
+            }
+        });
+
+        // Expose functions globally for inline HTML handlers
+        window.focusScreenFromGallery = focusScreenFromGallery;
+        window.switchScreen = switchScreen;
+        window.handleCommonGoogleLogin = handleCommonGoogleLogin;
+        window.logoutToCommonLogin = logoutToCommonLogin;
+        window.logoutSuperAdmin = logoutSuperAdmin;
+        window.logoutTeacher = logoutTeacher;
+        window.selectStudentSemester = selectStudentSemester;
+        window.handleAddStudent = handleAddStudent;
+        window.selectStudentFromDropdown = selectStudentFromDropdown;
+        window.renderStudentSearchDropdown = renderStudentSearchDropdown;
+        window.openAllAddedStudentsScreen = openAllAddedStudentsScreen;
+        window.promptDeleteStudent = promptDeleteStudent;
+        window.cancelDeleteStudent = cancelDeleteStudent;
+        window.confirmDeleteStudent = confirmDeleteStudent;
+        window.filterAllStudentsBySemester = filterAllStudentsBySemester;
+        window.renderAllStudentsScreen = renderAllStudentsScreen;
+        window.toggleAddTeacherPanel = toggleAddTeacherPanel;
+        window.formatTeacherName = formatTeacherName;
+        window.handleAddTeacher = handleAddTeacher;
+        window.promptDeleteTeacher = promptDeleteTeacher;
+        window.cancelDeleteTeacher = cancelDeleteTeacher;
+        window.confirmDeleteTeacher = confirmDeleteTeacher;
+        window.renderAddedTeachers = renderAddedTeachers;
+        window.toggleProfileMenu = toggleProfileMenu;
+        window.promptLogout = promptLogout;
+        window.cancelLogout = cancelLogout;
+        window.confirmLogout = confirmLogout;
+        window.toggleScreensDropdown = toggleScreensDropdown;
+        window.selectUserRoleFromDropdown = selectUserRoleFromDropdown;
+        window.openStudentSearchDropdown = openStudentSearchDropdown;
+
+        // Start Firebase connection & real-time Firestore listeners
+        initFirebaseBackend();
     </script>
 
 </body>
