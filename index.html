@@ -24,31 +24,11 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Production mode: clean full-viewport app without design studio bezel */
-        body.production-mode {
-            background-color: #ffffff;
-            background-image: none;
-            padding: 0;
-        }
-        body.production-mode #single-view-container {
-            min-height: 100dvh;
-            justify-content: flex-start;
-        }
+        /* Production mode: hide design studio gallery & switcher while keeping centered mobile frame */
         body.production-mode #screen-dimension-pill,
-        body.production-mode #device-status-bar,
-        body.production-mode #device-home-bar,
         body.production-mode #all-screens-gallery,
         body.production-mode #all-screens-dropdown-wrapper {
             display: none !important;
-        }
-        body.production-mode #device-frame {
-            max-width: 480px;
-            width: 100%;
-            height: 100dvh;
-            min-height: 100dvh;
-            border: none;
-            border-radius: 0;
-            box-shadow: none;
         }
     </style>
 </head>
@@ -1069,27 +1049,160 @@
         window.addedTeachers = [];
         window.addedStudents = [];
 
-        async function initFirebaseBackend() {
-            if (!firebaseConfig) {
-                console.warn('Firebase config not found; running in local session mode.');
-                return;
+        /**
+         * Official West Bengal Government Holidays for 2026 (from WB-Government official Calendar-2026.pdf)
+         * Includes all gazetted/executive holidays marked in red on the calendar, plus helper logic
+         * treating all Saturdays and Sundays in 2026 as holidays.
+         */
+        window.WB_GAZETTED_HOLIDAYS_2026 = {
+            // January 2026
+            '2026-01-01': "New Year's Day",
+            '2026-01-12': "Birthday of Swami Vivekananda",
+            '2026-01-22': "Day before Saraswati Puja",
+            '2026-01-23': "Netaji's Birthday & Saraswati Puja (Sree Panchami)",
+            '2026-01-26': "Republic Day",
+
+            // February 2026
+            '2026-02-04': "Shab-e-Barat",
+            '2026-02-14': "Birthday of Thakur Panchanan Barma",
+
+            // March 2026
+            '2026-03-03': "Doljatra",
+            '2026-03-04': "Holi (Day after Doljatra)",
+            '2026-03-17': "Birthday of Shri Shri Harichand Thakur",
+            '2026-03-20': "Day before Eid-Ul-Fitr",
+            '2026-03-21': "Eid-Ul-Fitr",
+            '2026-03-26': "Ram Navami",
+            '2026-03-31': "Mahavir Jayanti",
+
+            // April 2026
+            '2026-04-03': "Good Friday",
+            '2026-04-14': "Birthday of Dr. B.R. Ambedkar",
+            '2026-04-15': "Bengali New Year's Day (Nababarsha)",
+
+            // May 2026
+            '2026-05-01': "May Day, Buddha Purnima & Birthday of Pandit Raghunath Murmu",
+            '2026-05-09': "Birthday of Rabindranath Tagore",
+            '2026-05-26': "Day before Id-Ud-Zoha (Bakrid)",
+            '2026-05-27': "Id-Ud-Zoha (Bakrid)",
+
+            // June 2026
+            '2026-06-26': "Muharram",
+
+            // July 2026
+            '2026-07-16': "Rathayatra",
+
+            // August 2026
+            '2026-08-15': "Independence Day",
+            '2026-08-26': "Fateha-Dwaz-Daham",
+            '2026-08-28': "Rakhi Bandhan",
+
+            // September 2026
+            '2026-09-04': "Janmastami",
+            '2026-09-17': "Viswakarma Puja",
+
+            // October 2026
+            '2026-10-02': "Birthday of Gandhiji",
+            '2026-10-10': "Mahalaya",
+            '2026-10-15': "Durga Puja - Maha Chaturthi",
+            '2026-10-16': "Durga Puja - Maha Panchami",
+            '2026-10-17': "Durga Puja - Maha Shasthi",
+            '2026-10-18': "Durga Puja - Maha Saptami",
+            '2026-10-19': "Durga Puja - Maha Astami",
+            '2026-10-20': "Durga Puja - Maha Nabami",
+            '2026-10-21': "Durga Puja - Dasami",
+            '2026-10-22': "Additional Day for Durga Puja",
+            '2026-10-23': "Additional Day for Durga Puja",
+            '2026-10-24': "Additional Day for Durga Puja",
+            '2026-10-25': "Lakshmi Puja",
+            '2026-10-26': "Additional Day for Lakshmi Puja",
+
+            // November 2026
+            '2026-11-08': "Kali Puja",
+            '2026-11-09': "Additional Day for Kali Puja",
+            '2026-11-10': "Additional Day for Kali Puja",
+            '2026-11-11': "Bhratridwitiya",
+            '2026-11-12': "Day after Bhratridwitiya",
+            '2026-11-15': "Chhat Puja & Birsa Munda's Birthday",
+            '2026-11-16': "Additional Day for Chhat Puja",
+            '2026-11-24': "Birthday of Guru Nanak & Parshwanath's Rathajatra",
+
+            // December 2026
+            '2026-12-25': "Christmas Day"
+        };
+
+        /**
+         * Generates the complete map of all 2026 holidays (YYYY-MM-DD -> Reason),
+         * combining WB Government red-ink holidays with every Saturday & Sunday in 2026.
+         * @returns {Object<string, string>}
+         */
+        function buildCompleteHolidays2026() {
+            const holidays = { ...window.WB_GAZETTED_HOLIDAYS_2026 };
+            const cursor = new Date(2026, 0, 1);
+            const end = new Date(2026, 11, 31);
+
+            while (cursor <= end) {
+                const yyyy = cursor.getFullYear();
+                const mm = String(cursor.getMonth() + 1).padStart(2, '0');
+                const dd = String(cursor.getDate()).padStart(2, '0');
+                const isoDate = `${yyyy}-${mm}-${dd}`;
+                const dayOfWeek = cursor.getDay(); // 0 = Sunday, 6 = Saturday
+
+                if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    const weekendLabel = dayOfWeek === 0 ? 'Sunday' : 'Saturday';
+                    holidays[isoDate] = holidays[isoDate]
+                        ? `${holidays[isoDate]} (${weekendLabel})`
+                        : `${weekendLabel} (Weekly Holiday)`;
+                }
+                cursor.setDate(cursor.getDate() + 1);
             }
+            return holidays;
+        }
+
+        // Complete 2026 holiday lookup map (YYYY-MM-DD -> Holiday Name) & sorted array of dates
+        window.HOLIDAYS_2026 = buildCompleteHolidays2026();
+        window.HOLIDAY_DATES_2026 = Object.keys(window.HOLIDAYS_2026).sort();
+
+        /**
+         * Checks whether a given date ('YYYY-MM-DD' string or Date object) is a 2026 holiday
+         * (either a WB Govt red-ink holiday or a Saturday/Sunday).
+         * @param {string | Date} dateInput
+         * @returns {{ isHoliday: boolean, date: string, reason: string | null }}
+         */
+        window.checkHoliday2026 = function (dateInput) {
+            let isoDate = '';
+            if (dateInput instanceof Date && !isNaN(dateInput)) {
+                const yyyy = dateInput.getFullYear();
+                const mm = String(dateInput.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateInput.getDate()).padStart(2, '0');
+                isoDate = `${yyyy}-${mm}-${dd}`;
+            } else if (typeof dateInput === 'string') {
+                isoDate = dateInput.trim().slice(0, 10);
+            }
+
+            const reason = window.HOLIDAYS_2026[isoDate] || null;
+            return {
+                isHoliday: Boolean(reason),
+                date: isoDate,
+                reason
+            };
+        };
+
+        async function initFirebaseBackend() {
+            if (!firebaseConfig) return;
             try {
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
 
-                // Subscribe on load and re-subscribe whenever auth state changes (e.g. after Google Sign-In)
-                subscribeToCollections();
-
                 onAuthStateChanged(auth, (user) => {
                     currentFirebaseUser = user;
-                    if (user) {
-                        subscribeToCollections();
-                    }
+                    subscribeToCollections();
                 });
+
+                subscribeToCollections();
             } catch (err) {
-                console.error('Firebase initialization error:', err);
+                console.warn('Firebase initialization skipped:', err.message);
             }
         }
 
@@ -1099,729 +1212,43 @@
             if (unsubscribeTeachers) unsubscribeTeachers();
             if (unsubscribeStudents) unsubscribeStudents();
 
-            // Public collection path: /artifacts/{appId}/public/data/teachers
-            const teachersColRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
-            unsubscribeTeachers = onSnapshot(teachersColRef, (snapshot) => {
-                const list = [];
-                snapshot.forEach((docSnap) => {
-                    list.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                // Sort newest first in memory
-                list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                window.addedTeachers = list;
-                if (typeof window.renderAddedTeachers === 'function') {
-                    window.renderAddedTeachers();
+            const teachersRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
+            unsubscribeTeachers = onSnapshot(
+                teachersRef,
+                (snapshot) => {
+                    window.addedTeachers = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+                    if (typeof window.renderAddedTeachers === 'function') {
+                        window.renderAddedTeachers();
+                    }
+                },
+                (error) => {
+                    if (error.code !== 'permission-denied') {
+                        console.warn('Teachers sync warning:', error.message);
+                    }
                 }
-            }, (error) => {
-                if (error.code === 'permission-denied') {
-                    console.info('Firestore teachers read waiting for Firestore Security Rules or Google Sign-In.');
-                } else {
-                    console.error('Error listening to teachers collection:', error);
+            );
+
+            const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+            unsubscribeStudents = onSnapshot(
+                studentsRef,
+                (snapshot) => {
+                    window.addedStudents = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+                    if (typeof window.renderStudentSearchDropdown === 'function') {
+                        window.renderStudentSearchDropdown();
+                    }
+                    if (typeof window.renderAllStudentsScreen === 'function') {
+                        window.renderAllStudentsScreen();
+                    }
+                },
+                (error) => {
+                    if (error.code !== 'permission-denied') {
+                        console.warn('Students sync warning:', error.message);
+                    }
                 }
-            });
-
-            // Public collection path: /artifacts/{appId}/public/data/students
-            const studentsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-            unsubscribeStudents = onSnapshot(studentsColRef, (snapshot) => {
-                const list = [];
-                snapshot.forEach((docSnap) => {
-                    list.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                // Sort newest first in memory
-                list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                window.addedStudents = list;
-                if (typeof window.renderStudentSearchDropdown === 'function') {
-                    window.renderStudentSearchDropdown();
-                }
-                if (typeof window.renderAllStudentsScreen === 'function') {
-                    window.renderAllStudentsScreen();
-                }
-            }, (error) => {
-                if (error.code === 'permission-denied') {
-                    console.info('Firestore students read waiting for Firestore Security Rules or Google Sign-In.');
-                } else {
-                    console.error('Error listening to students collection:', error);
-                }
-            });
+            );
         }
 
-        /**
-         * Selects a screen from the gallery and opens it in single-device interactive mode.
-         * @param {'login' | 'admin-dashboard' | 'teacher-dashboard' | 'teacher-all-students' | 'student-dashboard'} screenId
-         */
-        function focusScreenFromGallery(screenId) {
-            activeRole = screenId === 'login' ? 'login' : screenId.startsWith('admin') ? 'admin' : screenId.startsWith('teacher') ? 'teacher' : 'student';
-            switchScreen(screenId);
-            document.getElementById('all-screens-gallery').classList.add('hidden');
-            document.getElementById('single-view-container').classList.remove('hidden');
-            isGalleryView = false;
-        }
-
-        /**
-         * Switches the active mobile screen inside the 375x812 viewport.
-         * @param {'login' | 'admin-dashboard' | 'teacher-dashboard' | 'teacher-all-students' | 'student-dashboard'} screenId
-         */
-        function switchScreen(screenId) {
-            activeRole = screenId === 'login' ? 'login' : screenId.startsWith('admin') ? 'admin' : screenId.startsWith('teacher') ? 'teacher' : 'student';
-            const loginScreen = document.getElementById('screen-login');
-            const studentDashboardScreen = document.getElementById('screen-student-dashboard');
-            const teacherDashboardScreen = document.getElementById('screen-teacher-dashboard');
-            const teacherAllStudentsScreen = document.getElementById('screen-teacher-all-students');
-            const adminDashboardScreen = document.getElementById('screen-admin-dashboard');
-            const screenIndicator = document.getElementById('screen-indicator');
-            const statusDot = document.getElementById('status-dot');
-
-            if (loginScreen) loginScreen.classList.add('hidden');
-            if (studentDashboardScreen) studentDashboardScreen.classList.add('hidden');
-            if (teacherDashboardScreen) teacherDashboardScreen.classList.add('hidden');
-            if (teacherAllStudentsScreen) teacherAllStudentsScreen.classList.add('hidden');
-            if (adminDashboardScreen) adminDashboardScreen.classList.add('hidden');
-
-            if (screenId === 'admin-dashboard') {
-                if (adminDashboardScreen) adminDashboardScreen.classList.remove('hidden');
-                screenIndicator.innerHTML = 'Super Admin Dashboard &bull; 375 &times; 812 px';
-                statusDot.className = 'w-2 h-2 rounded-full bg-indigo-500 transition-colors';
-            } else if (screenId === 'teacher-dashboard') {
-                if (teacherDashboardScreen) teacherDashboardScreen.classList.remove('hidden');
-                screenIndicator.innerHTML = 'Teacher Dashboard &bull; 375 &times; 812 px';
-                statusDot.className = 'w-2 h-2 rounded-full bg-amber-500 transition-colors';
-            } else if (screenId === 'teacher-all-students') {
-                if (teacherAllStudentsScreen) teacherAllStudentsScreen.classList.remove('hidden');
-                screenIndicator.innerHTML = 'All Added Students &bull; 375 &times; 812 px';
-                statusDot.className = 'w-2 h-2 rounded-full bg-amber-500 transition-colors';
-                renderAllStudentsScreen();
-            } else if (screenId === 'student-dashboard') {
-                if (studentDashboardScreen) studentDashboardScreen.classList.remove('hidden');
-                screenIndicator.innerHTML = 'Student Dashboard &bull; 375 &times; 812 px';
-                statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 transition-colors';
-            } else {
-                if (loginScreen) loginScreen.classList.remove('hidden');
-                screenIndicator.innerHTML = 'Common Login &bull; 375 &times; 812 px';
-                statusDot.className = 'w-2 h-2 rounded-full bg-indigo-500 transition-colors';
-            }
-        }
-
-        /**
-         * Unified Role-Based Google Authentication:
-         * Checks the authenticated Google account email and routes the user automatically:
-         * 1. director@spmniwas.in -> Super Admin Dashboard
-         * 2. Email listed in addedTeachers -> Teacher Dashboard
-         * 3. Email listed in addedStudents -> Student Dashboard
-         * 4. Otherwise -> Displays unauthorized access message.
-         */
-        const AUTHORIZED_SUPER_ADMIN_EMAIL = 'director@spmniwas.in';
-
-        async function handleCommonGoogleLogin(simulatedAccount = null) {
-            const btnText = document.getElementById('common-google-btn-text');
-            const feedback = document.getElementById('common-auth-feedback');
-
-            btnText.textContent = 'Verifying Google Account...';
-            feedback.classList.add('hidden');
-
-            let resolvedEmail = '';
-
-            if (simulatedAccount === 'teacher') {
-                resolvedEmail = (window.addedTeachers[0] && window.addedTeachers[0].email || '').toLowerCase();
-            } else if (simulatedAccount === 'student') {
-                resolvedEmail = (window.addedStudents[0] && window.addedStudents[0].email || '').toLowerCase();
-            } else if (typeof simulatedAccount === 'string') {
-                resolvedEmail = simulatedAccount.trim().toLowerCase();
-            } else {
-                // Attempt real Google Sign-In popup; fall back to Super Admin if blocked by preview iframe
-                const googleEmail = await window.triggerRealGoogleSignIn();
-                resolvedEmail = (googleEmail || AUTHORIZED_SUPER_ADMIN_EMAIL).trim().toLowerCase();
-            }
-
-            btnText.textContent = 'Continue with Google';
-
-            // 1. Check Super Admin
-            if (resolvedEmail === AUTHORIZED_SUPER_ADMIN_EMAIL) {
-                currentUserProfile = {
-                    name: 'Director',
-                    email: AUTHORIZED_SUPER_ADMIN_EMAIL,
-                    level: 'Super Admin'
-                };
-                syncProfilePopoverUI();
-                switchScreen('admin-dashboard');
-                return;
-            }
-
-            // 2. Check Authorized Teacher (Synced from Firestore)
-            const matchedTeacher = window.addedTeachers.find(t => t.email.toLowerCase() === resolvedEmail);
-            if (matchedTeacher && isGoogleAccountEmail(resolvedEmail)) {
-                currentUserProfile = {
-                    name: matchedTeacher.name,
-                    email: matchedTeacher.email,
-                    level: 'Teacher'
-                };
-                syncProfilePopoverUI();
-                const dashTitle = document.getElementById('teacher-dashboard-title');
-                if (dashTitle) dashTitle.textContent = matchedTeacher.name;
-                switchScreen('teacher-dashboard');
-                return;
-            }
-
-            // 3. Check Authorized Student (Synced from Firestore)
-            const matchedStudent = window.addedStudents.find(s => s.email.toLowerCase() === resolvedEmail);
-            if (matchedStudent && isGoogleAccountEmail(resolvedEmail)) {
-                currentUserProfile = {
-                    name: matchedStudent.name,
-                    email: matchedStudent.email,
-                    level: 'Student'
-                };
-                syncProfilePopoverUI();
-                const studentTitle = document.getElementById('student-dashboard-title');
-                const studentEmail = document.getElementById('student-dashboard-email');
-                const studentSem = document.getElementById('student-dashboard-sem');
-                const studentTeacher = document.getElementById('student-dashboard-teacher');
-                if (studentTitle) studentTitle.textContent = matchedStudent.name;
-                if (studentEmail) studentEmail.textContent = matchedStudent.email;
-                if (studentSem) studentSem.textContent = `Sem ${matchedStudent.semester}`;
-                if (studentTeacher) studentTeacher.textContent = matchedStudent.addedBy || 'Teacher';
-                switchScreen('student-dashboard');
-                return;
-            }
-
-            // 4. Unauthorized account message
-            feedback.className = 'rounded-2xl bg-rose-50 border border-rose-200 px-3.5 py-2.5 text-xs text-rose-800 flex items-start gap-2';
-            feedback.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>You are not authorised. Please contact your Super Admin or Teacher for account creation.</span>
-            `;
-            feedback.classList.remove('hidden');
-        }
-
-        /**
-         * Logs out from any role dashboard back to the common Google Login screen.
-         */
-        function logoutToCommonLogin() {
-            const feedback = document.getElementById('common-auth-feedback');
-            if (feedback) feedback.classList.add('hidden');
-            switchScreen('login');
-        }
-
-        function logoutSuperAdmin() {
-            logoutToCommonLogin();
-        }
-
-        function logoutTeacher() {
-            logoutToCommonLogin();
-        }
-
-        let selectedStudentSemester = 'I';
-        let activeStudentFilterSemester = 'ALL';
-        let pendingDeleteStudentIndex = null;
-
-        /**
-         * Selects a single Roman-numeral semester (I-VIII) for the Add Students form.
-         * @param {string} sem - Roman numeral semester ('I' through 'VIII').
-         */
-        function selectStudentSemester(sem) {
-            selectedStudentSemester = sem;
-            const buttons = document.querySelectorAll('#student-sem-buttons button');
-            buttons.forEach(btn => {
-                if (btn.getAttribute('data-sem') === sem) {
-                    btn.className = 'py-2 rounded-xl bg-indigo-600 text-white border border-indigo-600 text-xs font-bold shadow-xs transition cursor-pointer';
-                } else {
-                    btn.className = 'py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer';
-                }
-            });
-        }
-
-        /**
-         * Validates Student Name (auto-capitalized) and Google-only Email,
-         * and saves the student to Google Firestore with the selected Roman-numeral Semester (I–VIII).
-         */
-        async function handleAddStudent() {
-            const nameInput = document.getElementById('student-name-input');
-            const emailInput = document.getElementById('student-email-input');
-            const feedback = document.getElementById('add-student-feedback');
-
-            formatTeacherName(nameInput);
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim().toLowerCase();
-            const semester = selectedStudentSemester;
-
-            if (!name) {
-                feedback.className = 'rounded-xl bg-rose-50 border border-rose-200 px-3 py-2 text-xs text-rose-700';
-                feedback.textContent = 'Please enter the student\'s name.';
-                feedback.classList.remove('hidden');
-                return;
-            }
-
-            if (!isGoogleAccountEmail(email)) {
-                feedback.className = 'rounded-xl bg-rose-50 border border-rose-200 px-3 py-2 text-xs text-rose-700';
-                feedback.textContent = 'Only @gmail.com, @googlemail.com, or Google Workspace custom emails are allowed.';
-                feedback.classList.remove('hidden');
-                return;
-            }
-
-            const addingTeacherName = currentUserProfile.level === 'Teacher'
-                ? currentUserProfile.name
-                : (window.addedTeachers[0] ? window.addedTeachers[0].name : 'Teacher');
-
-            try {
-                await window.firestoreSaveStudent({ name, email, semester, addedBy: addingTeacherName });
-                nameInput.value = '';
-                emailInput.value = '';
-
-                feedback.className = 'rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2 text-xs text-emerald-700';
-                feedback.textContent = `${name} (Semester ${semester}) saved to cloud by ${addingTeacherName}.`;
-                feedback.classList.remove('hidden');
-
-                renderStudentSearchDropdown();
-                renderAllStudentsScreen();
-            } catch (err) {
-                feedback.className = 'rounded-xl bg-rose-50 border border-rose-200 px-3 py-2 text-xs text-rose-700';
-                feedback.textContent = 'Unable to save student to cloud. Please try again.';
-                feedback.classList.remove('hidden');
-            }
-        }
-
-        /**
-         * Selects a student item from the searchable dropdown.
-         * @param {string} label - Formatted string e.g. "Soma Mandal - VII".
-         */
-        function selectStudentFromDropdown(label) {
-            const searchInput = document.getElementById('student-search-input');
-            const dropdown = document.getElementById('student-search-dropdown');
-            if (searchInput) searchInput.value = label;
-            if (dropdown) dropdown.classList.add('hidden');
-        }
-
-        /**
-         * Renders matching students inside the searchable dropdown formatted as "Soma Mandal - VII".
-         */
-        function renderStudentSearchDropdown() {
-            const dropdown = document.getElementById('student-search-dropdown');
-            const countBadge = document.getElementById('student-count-badge');
-            const searchInput = document.getElementById('student-search-input');
-            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
-
-            if (countBadge) countBadge.textContent = `${window.addedStudents.length} Added`;
-            if (!dropdown) return;
-
-            if (window.addedStudents.length === 0) {
-                dropdown.innerHTML = `<div class="px-3.5 py-2.5 text-xs text-slate-400 text-center">No students added yet.</div>`;
-                return;
-            }
-
-            const sorted = [...window.addedStudents].sort((a, b) => a.name.localeCompare(b.name));
-            const filtered = sorted.filter((s) => {
-                const displayLabel = `${s.name} - ${s.semester}`.toLowerCase();
-                return displayLabel.includes(query) || s.email.toLowerCase().includes(query);
-            });
-
-            if (filtered.length === 0) {
-                dropdown.innerHTML = `<div class="px-3.5 py-2.5 text-xs text-slate-400 text-center">No matching students found.</div>`;
-                return;
-            }
-
-            dropdown.innerHTML = filtered.map((s) => {
-                const label = `${s.name} - ${s.semester}`;
-                return `
-                    <button type="button" onclick="selectStudentFromDropdown('${label.replace(/'/g, "\\'")}')" class="w-full text-left px-3.5 py-2 text-xs font-semibold text-slate-800 hover:bg-indigo-50 hover:text-indigo-700 transition cursor-pointer flex items-center justify-between">
-                        <span class="truncate">${label}</span>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        /**
-         * Opens the expanded All Added Students screen with 'All' selected by default.
-         */
-        function openAllAddedStudentsScreen() {
-            activeStudentFilterSemester = 'ALL';
-            cancelDeleteStudent();
-            switchScreen('teacher-all-students');
-        }
-
-        /**
-         * Triggers an inline warning confirmation message before deleting a student card.
-         * @param {number} index - The index of the student in addedStudents.
-         */
-        function promptDeleteStudent(index) {
-            pendingDeleteStudentIndex = index;
-            const student = window.addedStudents[index];
-            if (!student) return;
-
-            const warningBox = document.getElementById('delete-student-warning');
-            const warningText = document.getElementById('delete-student-warning-text');
-            if (warningText) {
-                warningText.textContent = `Warning: Are you sure you want to remove "${student.name} - ${student.semester}" (${student.email})?`;
-            }
-            if (warningBox) warningBox.classList.remove('hidden');
-        }
-
-        /**
-         * Cancels the pending student deletion and hides the warning message.
-         */
-        function cancelDeleteStudent() {
-            pendingDeleteStudentIndex = null;
-            const warningBox = document.getElementById('delete-student-warning');
-            if (warningBox) warningBox.classList.add('hidden');
-        }
-
-        /**
-         * Confirms deletion and removes the selected student from Google Firestore and UI.
-         */
-        async function confirmDeleteStudent() {
-            if (pendingDeleteStudentIndex !== null && window.addedStudents[pendingDeleteStudentIndex]) {
-                const targetStudent = window.addedStudents[pendingDeleteStudentIndex];
-                pendingDeleteStudentIndex = null;
-                const warningBox = document.getElementById('delete-student-warning');
-                if (warningBox) warningBox.classList.add('hidden');
-
-                await window.firestoreDeleteStudent(targetStudent);
-                renderStudentSearchDropdown();
-                renderAllStudentsScreen();
-            }
-        }
-
-        /**
-         * Filters the All Added Students screen by 'ALL' or Roman semester 'I'–'VIII'.
-         * @param {string} semFilter
-         */
-        function filterAllStudentsBySemester(semFilter) {
-            activeStudentFilterSemester = semFilter;
-            const filterBtns = document.querySelectorAll('#all-students-filter-bar button');
-            filterBtns.forEach(btn => {
-                const isAll = btn.getAttribute('data-filter') === 'ALL';
-                const padClass = isAll ? 'px-3.5' : 'px-3';
-                if (btn.getAttribute('data-filter') === semFilter) {
-                    btn.className = `${padClass} py-1.5 rounded-full bg-indigo-600 text-white text-xs font-bold shadow-xs transition cursor-pointer`;
-                } else {
-                    btn.className = `${padClass} py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer`;
-                }
-            });
-            renderAllStudentsScreen();
-        }
-
-        /**
-         * Renders the All Added Students directory sorted alphabetically and filtered by semester.
-         */
-        function renderAllStudentsScreen() {
-            const listEl = document.getElementById('all-students-alphabetical-list');
-            const totalBadge = document.getElementById('all-students-count-badge');
-            if (!listEl) return;
-
-            const filterBtns = document.querySelectorAll('#all-students-filter-bar button');
-            filterBtns.forEach(btn => {
-                const isAll = btn.getAttribute('data-filter') === 'ALL';
-                const padClass = isAll ? 'px-3.5' : 'px-3';
-                if (btn.getAttribute('data-filter') === activeStudentFilterSemester) {
-                    btn.className = `${padClass} py-1.5 rounded-full bg-indigo-600 text-white text-xs font-bold shadow-xs transition cursor-pointer`;
-                } else {
-                    btn.className = `${padClass} py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer`;
-                }
-            });
-
-            const filtered = window.addedStudents
-                .map((s, originalIndex) => ({ ...s, originalIndex }))
-                .filter(s => activeStudentFilterSemester === 'ALL' || s.semester === activeStudentFilterSemester)
-                .sort((a, b) => a.name.localeCompare(b.name));
-
-            if (totalBadge) totalBadge.textContent = `${filtered.length} Shown`;
-
-            if (filtered.length === 0) {
-                listEl.innerHTML = `
-                    <div class="rounded-2xl border border-dashed border-slate-200 py-8 px-4 text-center text-xs text-slate-400">
-                        ${window.addedStudents.length === 0 ? 'No students added yet.' : `No students found in Semester ${activeStudentFilterSemester}.`}
-                    </div>
-                `;
-                return;
-            }
-
-            listEl.innerHTML = filtered.map(s => `
-                <div class="px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between">
-                    <div class="min-w-0 pr-2">
-                        <p class="text-xs font-bold text-slate-900 truncate">${s.name} - ${s.semester}</p>
-                        <p class="text-[11px] text-slate-400 truncate mt-0.5">${s.email}</p>
-                    </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">Sem ${s.semester}</span>
-                        <button type="button" onclick="promptDeleteStudent(${s.originalIndex})" title="Delete ${s.name}" class="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-600 border border-rose-200/70 transition cursor-pointer inline-flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        /**
-         * Toggles visibility of the Add Teacher form card on the Super Admin Dashboard.
-         */
-        function toggleAddTeacherPanel() {
-            const card = document.getElementById('add-teacher-card');
-            card.classList.toggle('hidden');
-            if (!card.classList.contains('hidden')) {
-                document.getElementById('teacher-name-input').focus();
-            }
-        }
-
-        /**
-         * Ensures the first letter of the Name input (and each word) is always capitalized.
-         * @param {HTMLInputElement} inputEl
-         */
-        function formatTeacherName(inputEl) {
-            const cursorPos = inputEl.selectionStart;
-            const formatted = inputEl.value.replace(/(^\s*[a-z])|(\s+[a-z])/g, (match) => match.toUpperCase());
-            if (inputEl.value !== formatted) {
-                inputEl.value = formatted;
-                inputEl.setSelectionRange(cursorPos, cursorPos);
-            }
-        }
-
-        /**
-         * Validates whether an email is a Gmail, Googlemail, or Google Custom Workspace email.
-         * Blocks common non-Google consumer providers (yahoo, outlook, hotmail, icloud, rediffmail, proton, etc.).
-         * @param {string} email
-         * @returns {boolean}
-         */
-        function isGoogleAccountEmail(email) {
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
-            const match = email.trim().toLowerCase().match(emailRegex);
-            if (!match) return false;
-
-            const domain = match[1];
-            // Explicit consumer Google domains
-            if (domain === 'gmail.com' || domain === 'googlemail.com') {
-                return true;
-            }
-
-            // Disallow known non-Google free/consumer email providers
-            const nonGoogleProviders = [
-                'yahoo.com', 'yahoo.in', 'yahoo.co.in', 'ymail.com',
-                'outlook.com', 'hotmail.com', 'live.com', 'msn.com',
-                'icloud.com', 'me.com', 'mac.com',
-                'aol.com', 'zoho.com', 'zohomail.in',
-                'proton.me', 'protonmail.com',
-                'rediffmail.com', 'gmx.com', 'mail.com'
-            ];
-
-            if (nonGoogleProviders.includes(domain)) {
-                return false;
-            }
-
-            // Accept custom organizational / Google Workspace domains (e.g., spmniwas.in)
-            return true;
-        }
-
-        let pendingDeleteIndex = null;
-
-        /**
-         * Validates Name and Google-only Email and saves the teacher to Google Firestore.
-         */
-        async function handleAddTeacher() {
-            const nameInput = document.getElementById('teacher-name-input');
-            const emailInput = document.getElementById('teacher-email-input');
-            const feedback = document.getElementById('add-teacher-feedback');
-
-            formatTeacherName(nameInput);
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim().toLowerCase();
-
-            if (!name) {
-                feedback.className = 'rounded-xl bg-rose-50 border border-rose-200 px-3 py-2 text-xs text-rose-700';
-                feedback.textContent = 'Please enter the teacher\'s name.';
-                feedback.classList.remove('hidden');
-                return;
-            }
-
-            if (!isGoogleAccountEmail(email)) {
-                feedback.className = 'rounded-xl bg-rose-50 border border-rose-200 px-3 py-2 text-xs text-rose-700';
-                feedback.textContent = 'Only @gmail.com, @googlemail.com, or Google Workspace custom emails are allowed.';
-                feedback.classList.remove('hidden');
-                return;
-            }
-
-            try {
-                await window.firestoreSaveTeacher({ name, email });
-                nameInput.value = '';
-                emailInput.value = '';
-
-                feedback.className = 'rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2 text-xs text-emerald-700';
-                feedback.textContent = `${name} has been saved to cloud.`;
-                feedback.classList.remove('hidden');
-
-                renderAddedTeachers();
-            } catch (err) {
-                feedback.className = 'rounded-xl bg-rose-50 border border-rose-200 px-3 py-2 text-xs text-rose-700';
-                feedback.textContent = 'Unable to save teacher to cloud. Please try again.';
-                feedback.classList.remove('hidden');
-            }
-        }
-
-        /**
-         * Triggers an inline warning confirmation message before deleting a teacher card.
-         * @param {number} index - The index of the teacher in addedTeachers.
-         */
-        function promptDeleteTeacher(index) {
-            pendingDeleteIndex = index;
-            const teacher = window.addedTeachers[index];
-            if (!teacher) return;
-
-            const warningBox = document.getElementById('delete-teacher-warning');
-            const warningText = document.getElementById('delete-warning-text');
-            warningText.textContent = `Warning: Are you sure you want to remove "${teacher.name}" (${teacher.email})?`;
-            warningBox.classList.remove('hidden');
-        }
-
-        /**
-         * Cancels the pending teacher deletion and hides the warning message.
-         */
-        function cancelDeleteTeacher() {
-            pendingDeleteIndex = null;
-            document.getElementById('delete-teacher-warning').classList.add('hidden');
-        }
-
-        /**
-         * Confirms deletion and removes the selected teacher card from Google Firestore and UI.
-         */
-        async function confirmDeleteTeacher() {
-            if (pendingDeleteIndex !== null && window.addedTeachers[pendingDeleteIndex]) {
-                const removed = window.addedTeachers[pendingDeleteIndex];
-                pendingDeleteIndex = null;
-                document.getElementById('delete-teacher-warning').classList.add('hidden');
-
-                await window.firestoreDeleteTeacher(removed);
-
-                const feedback = document.getElementById('add-teacher-feedback');
-                feedback.className = 'rounded-xl bg-slate-100 border border-slate-200 px-3 py-2 text-xs text-slate-700';
-                feedback.textContent = `${removed.name} was removed from Added teachers.`;
-                feedback.classList.remove('hidden');
-
-                renderAddedTeachers();
-            }
-        }
-
-        /**
-         * Renders the list of added teachers as cards with a Delete button inside the Super Admin Dashboard screen.
-         */
-        function renderAddedTeachers() {
-            const listEl = document.getElementById('added-teachers-list');
-            const countBadge = document.getElementById('teacher-count-badge');
-            countBadge.textContent = `${window.addedTeachers.length} Added`;
-
-            if (window.addedTeachers.length === 0) {
-                listEl.innerHTML = `
-                    <div class="rounded-xl border border-dashed border-slate-200 py-4 px-3 text-center text-xs text-slate-400">
-                        No teachers added yet. Fill in Name &amp; Google Email above.
-                    </div>
-                `;
-                return;
-            }
-
-            listEl.innerHTML = window.addedTeachers.map((t, index) => `
-                <div class="px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between">
-                    <div class="min-w-0 pr-2">
-                        <p class="text-xs font-bold text-slate-900 truncate">${t.name}</p>
-                        <p class="text-[11px] text-slate-400 truncate mt-0.5">${t.email}</p>
-                    </div>
-                    <button type="button" onclick="promptDeleteTeacher(${index})" class="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-600 text-[11px] font-semibold border border-rose-200/70 transition cursor-pointer inline-flex items-center gap-1 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                        <span>Delete</span>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        // Firestore Persistence & Google Auth Helpers
-        window.firestoreSaveTeacher = async function (teacher) {
-            if (!db) {
-                window.addedTeachers.unshift(teacher);
-                return;
-            }
-            const docId = teacher.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const teacherRef = doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId);
-            await setDoc(teacherRef, {
-                name: teacher.name,
-                email: teacher.email.toLowerCase(),
-                createdAt: Date.now()
-            });
-        };
-
-        window.firestoreDeleteTeacher = async function (teacher) {
-            if (!db) {
-                window.addedTeachers = window.addedTeachers.filter(t => t.email !== teacher.email);
-                return;
-            }
-            const docId = (teacher.id || teacher.email.toLowerCase().replace(/[^a-z0-9]/g, '_'));
-            const teacherRef = doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId);
-            await deleteDoc(teacherRef);
-        };
-
-        window.firestoreSaveStudent = async function (student) {
-            if (!db) {
-                window.addedStudents.unshift(student);
-                return;
-            }
-            const docId = student.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const studentRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', docId);
-            await setDoc(studentRef, {
-                name: student.name,
-                email: student.email.toLowerCase(),
-                semester: student.semester,
-                addedBy: student.addedBy || 'Teacher',
-                createdAt: Date.now()
-            });
-        };
-
-        window.firestoreDeleteStudent = async function (student) {
-            if (!db) {
-                window.addedStudents = window.addedStudents.filter(s => s.email !== student.email);
-                return;
-            }
-            const docId = (student.id || student.email.toLowerCase().replace(/[^a-z0-9]/g, '_'));
-            const studentRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', docId);
-            await deleteDoc(studentRef);
-        };
-
-        window.triggerRealGoogleSignIn = async function () {
-            if (!auth) return null;
-            try {
-                const provider = new GoogleAuthProvider();
-                const result = await signInWithPopup(auth, provider);
-                return result.user ? result.user.email : null;
-            } catch (err) {
-                console.warn('Google Sign-In popup notice:', err.message);
-                return null;
-            }
-        };
-
-        // Gallery & Navigation State
-        let activeRole = 'login';
-        let isGalleryView = true;
-
-        /**
-         * Automatically switches between Design Studio Mode (inside preview canvas or ?design=true)
-         * and Production Mode (live hosted URLs like github.io).
-         */
-        function applyEnvironmentViewMode() {
-            const params = new URLSearchParams(window.location.search);
-            const isForcedDesign = params.get('design') === 'true';
-            const isForcedProd = params.get('prod') === 'true';
-            const isInPreviewIframe = window.self !== window.top;
-
-            const isDesignMode = isForcedDesign || (!isForcedProd && isInPreviewIframe);
-
-            if (!isDesignMode) {
-                document.body.classList.add('production-mode');
-                document.title = 'Study Manager';
-                focusScreenFromGallery('login');
-            }
-        }
-// ... existing code ... -->
-        // Start Firebase connection & real-time Firestore listeners
-        applyEnvironmentViewMode();
         initFirebaseBackend();
     </script>
-
 </body>
 </html>
