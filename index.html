@@ -30,6 +30,32 @@
         body.production-mode #all-screens-dropdown-wrapper {
             display: none !important;
         }
+        /* Native full-bleed mobile experience on actual mobile screens in production */
+        @media (max-width: 639px) {
+            body.production-mode {
+                padding: 0 !important;
+                background: #ffffff !important;
+                align-items: stretch !important;
+                justify-content: flex-start !important;
+            }
+            body.production-mode #single-view-container {
+                min-height: 100dvh;
+                justify-content: flex-start !important;
+            }
+            body.production-mode #device-frame {
+                max-width: 100% !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 100dvh !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+            body.production-mode #device-status-bar,
+            body.production-mode #device-home-bar {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body class="studio-bg min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 antialiased text-slate-900 relative overflow-x-hidden">
