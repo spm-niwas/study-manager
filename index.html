@@ -174,10 +174,9 @@
 
                     <!-- Teacher Welcome & Today's Date / Holiday Card -->
                     <div id="teacher-welcome-card" class="rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-slate-50 border border-indigo-200/80 p-4 space-y-3 shadow-2xs">
-                        <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2">
                             <div class="min-w-0">
                                 <h2 id="teacher-welcome-name" class="text-base font-bold text-slate-900 truncate">Welcome, Teacher</h2>
-                                <p id="teacher-welcome-designation" class="text-sm font-medium text-indigo-600 mt-0.5">Faculty Member &bull; Teacher</p>
                             </div>
                             <span id="teacher-today-status-pill" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0">Working Day</span>
                         </div>
@@ -196,6 +195,27 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Section: View Calendar (Button matching Students button styling) -->
+                    <button type="button" onclick="openTeacherCalendarScreen()" class="w-full p-4 rounded-2xl bg-indigo-50/90 hover:bg-indigo-100/90 active:scale-[0.99] border border-indigo-200/80 shadow-2xs flex items-center justify-between transition cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="text-base font-bold text-slate-900 block leading-tight">View Calendar</span>
+                                <span class="text-xs text-slate-500 block mt-0.5">2026 holidays &amp; academic schedule</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="text-xs font-semibold text-indigo-700 bg-white border border-indigo-200/80 px-2.5 py-1 rounded-full">2026</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </button>
 
                     <!-- Section: Students (Button navigating to Students screen) -->
                     <button type="button" onclick="openAllAddedStudentsScreen()" class="w-full p-4 rounded-2xl bg-indigo-50/90 hover:bg-indigo-100/90 active:scale-[0.99] border border-indigo-200/80 shadow-2xs flex items-center justify-between transition cursor-pointer">
@@ -336,28 +356,19 @@
                             <h2 class="text-base font-bold uppercase tracking-wider text-slate-900">Add Students</h2>
                         </div>
 
-                        <!-- Sub-Header Outside Box: Add Students Page -->
+                        <!-- Sub-Header Outside Box: Add Students Page (Google Sheet) -->
                         <div class="space-y-2.5">
                             <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-slate-800 tracking-tight">Add Students Page</h3>
+                                <h3 class="text-sm font-bold text-slate-800 tracking-tight">Add Students Page (Google Sheet)</h3>
                                 <span id="sheet-sync-badge" class="hidden text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 shrink-0">Linked</span>
                             </div>
 
                             <!-- Google Sheet Import & Continuous Check Form -->
                             <div class="rounded-2xl bg-indigo-50/60 border border-indigo-200/80 p-4 space-y-3 shadow-2xs">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                    </div>
-                                    <p class="text-xs font-medium text-slate-600 leading-snug">Google Sheet must be set to <span class="font-semibold text-slate-800">&ldquo;Anyone with the link &rarr; Viewer&rdquo;</span></p>
-                                </div>
-
                                 <div class="flex items-center gap-2">
                                     <input id="student-sheet-url-input" type="url" placeholder="Paste Google Sheet URL..." class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
-                                    <button id="student-sheet-sync-btn" type="button" onclick="handleImportStudentGoogleSheet(true)" class="px-3.5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold shadow-2xs transition cursor-pointer shrink-0">
-                                        Check &amp; Import
+                                    <button id="student-sheet-sync-btn" type="button" onclick="handleImportStudentGoogleSheet(true)" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold shadow-2xs transition cursor-pointer shrink-0">
+                                        Import
                                     </button>
                                 </div>
                                 <p class="text-xs text-slate-500 leading-snug">Columns expected: <span class="font-semibold text-slate-700">Name, Email, Semester (I–VIII)</span>. Auto-checks on every visit (only adds).</p>
@@ -402,6 +413,64 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- SCREEN 2D: Teacher 2026 Holiday Calendar -->
+            <main id="screen-teacher-calendar" class="hidden flex-1 px-6 py-4 flex flex-col justify-between overflow-y-auto no-scrollbar">
+                <div class="space-y-4 pb-6">
+                    <!-- Top Navigation Bar -->
+                    <div class="flex items-center justify-between pt-1">
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="switchScreen('teacher-dashboard')" title="Back to Teacher Dashboard" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition cursor-pointer shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <span class="text-base font-bold tracking-tight text-indigo-600 uppercase leading-none">Study Manager</span>
+                        </div>
+                        <span class="text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/80 px-3 py-1 rounded-full">2026</span>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-0.5">
+                        <h1 class="text-xl font-bold text-slate-900 leading-tight">Holiday Calendar</h1>
+                        <span class="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full">Red = Holiday</span>
+                    </div>
+
+                    <!-- Month Switcher -->
+                    <div class="flex items-center justify-between rounded-2xl bg-slate-50 border border-slate-200 p-2">
+                        <button id="teacher-calendar-prev-btn" type="button" onclick="changeTeacherCalendarMonth(-1)" class="w-9 h-9 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center transition cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span id="teacher-calendar-month-label" class="text-base font-bold text-slate-900">November 2026</span>
+                        <button id="teacher-calendar-next-btn" type="button" onclick="changeTeacherCalendarMonth(1)" class="w-9 h-9 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center transition cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Calendar Grid -->
+                    <div class="rounded-2xl bg-white border border-slate-200 p-3 shadow-2xs space-y-2">
+                        <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-400 pb-1">
+                            <span>Mon</span>
+                            <span>Tue</span>
+                            <span>Wed</span>
+                            <span>Thu</span>
+                            <span>Fri</span>
+                            <span class="text-rose-500">Sat</span>
+                            <span class="text-rose-500">Sun</span>
+                        </div>
+                        <div id="teacher-calendar-days-grid" class="grid grid-cols-7 gap-1 text-center"></div>
+                    </div>
+
+                    <!-- Gazetted Holidays for Selected Month -->
+                    <div class="space-y-2">
+                        <h2 class="text-sm font-bold text-slate-800">Gazetted Holidays This Month</h2>
+                        <div id="teacher-calendar-month-holidays" class="space-y-2"></div>
                     </div>
                 </div>
             </main>
@@ -516,38 +585,8 @@
                             </div>
                         </div>
 
-                        <!-- Content Preview -->
-                        <div class="flex-1 px-6 py-4 flex flex-col justify-between overflow-hidden bg-white text-slate-900 pointer-events-none">
-                            <div class="my-auto flex flex-col justify-center space-y-8 py-4">
-                                <div class="text-center flex flex-col items-center">
-                                    <div class="flex flex-col items-center gap-3.5 mb-2">
-                                        <div class="w-16 h-16 rounded-3xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                            </svg>
-                                        </div>
-                                        <h1 class="text-2xl font-bold tracking-tight text-indigo-600 uppercase">Study Manager</h1>
-                                    </div>
-                                    <p class="text-sm font-medium text-slate-600">Manage your studies. Be smart!</p>
-                                </div>
-
-                                <div class="space-y-4">
-                                    <div class="w-full py-3.5 px-4 bg-white text-slate-800 font-semibold text-sm rounded-2xl border border-slate-200 shadow-sm flex items-center justify-center gap-3">
-                                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-                                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
-                                            <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14z"/>
-                                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96z"/>
-                                        </svg>
-                                        <span>Continue with Google</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="text-center pb-2 shrink-0">
-                                <p class="text-[11px] text-slate-400">Role-based access &bull; Super Admin, Teacher &amp; Student</p>
-                            </div>
-                        </div>
+                        <!-- Mirrored Live Content -->
+                        <div data-mirror-screen="screen-login" class="flex-1 flex flex-col overflow-hidden bg-white text-slate-900 pointer-events-none"></div>
 
                         <!-- Home Indicator -->
                         <div class="w-full pb-2 pt-1 bg-white flex justify-center shrink-0">
@@ -559,7 +598,6 @@
             
             <!-- ROLE GROUP: Super Admin Screens -->
             <div data-role-group="admin" class="hidden flex flex-wrap items-start justify-center gap-10">
-                <!-- SUPER ADMIN SCREEN: Dashboard -->
                 <div class="flex flex-col items-center group">
                     <div class="mb-3 flex items-center gap-2 text-xs font-medium text-slate-600 bg-white/90 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-xs">
                         <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
@@ -579,191 +617,26 @@
                             </div>
                         </div>
 
-                        <!-- Content Preview -->
+                        <!-- Super Admin Preview -->
                         <div class="flex-1 px-6 py-4 flex flex-col justify-between overflow-hidden bg-white text-slate-900 pointer-events-none">
                             <div class="space-y-5">
                                 <div class="flex items-center justify-between pt-1">
                                     <div class="flex items-center gap-2.5">
                                         <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                                                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                             </svg>
                                         </div>
                                         <div>
                                             <span class="text-xs font-bold tracking-wider text-indigo-600 uppercase block leading-none">Study Manager</span>
-                                            <h1 class="text-lg font-bold text-slate-900 leading-tight mt-0.5">Teacher Portal</h1>
-                                        </div>
-                                    </div>
-                                    <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <!-- Gallery Preview: Welcome & Date/Holiday Card -->
-                                <div class="rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-slate-50 border border-indigo-200/80 p-4 space-y-3 shadow-2xs">
-                                    <div class="flex items-start justify-between gap-2">
-                                        <div class="min-w-0">
-                                            <h2 class="text-base font-bold text-slate-900 truncate">Welcome, Teacher</h2>
-                                            <p class="text-sm font-medium text-indigo-600 mt-0.5">Faculty Member &bull; Teacher</p>
-                                        </div>
-                                        <span id="gallery-teacher-status-pill" class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/80 shrink-0">Holiday</span>
-                                    </div>
-                                    <div class="pt-2.5 border-t border-indigo-100/80 space-y-2">
-                                        <div class="flex items-center gap-2 text-sm text-slate-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                            <span id="gallery-teacher-date-text" class="font-medium text-slate-700">Today is Saturday, 21 November 2026</span>
-                                        </div>
-                                        <div id="gallery-teacher-holiday-banner" class="rounded-xl bg-amber-50 border border-amber-200/90 px-3 py-2 flex items-start gap-2 text-amber-900">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <p id="gallery-teacher-holiday-text" class="text-xs font-semibold leading-snug">Today is a holiday: Saturday (Weekly Holiday)</p>
+                                            <h1 class="text-lg font-bold text-slate-900 leading-tight mt-0.5">Super Admin</h1>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Gallery Preview: Students Button -->
-                                <div class="w-full p-4 rounded-2xl bg-indigo-50/90 border border-indigo-200/80 shadow-2xs flex items-center justify-between">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                        </div>
-                                        <div class="text-left">
-                                            <span class="text-base font-bold text-slate-900 block leading-tight">Students</span>
-                                            <span class="text-xs text-slate-500 block mt-0.5">Add, view &amp; manage enrolled students</span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-2 shrink-0">
-                                        <span data-gallery-student-count class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full">0 Added</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Home Indicator -->
-                        <div class="w-full pb-2 pt-1 bg-white flex justify-center shrink-0">
-                            <div class="w-32 h-1 bg-slate-900 rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TEACHER SCREEN 2: Students (Search, Add & Manage) -->
-                <div class="flex flex-col items-center group">
-                    <div class="mb-3 flex items-center gap-2 text-xs font-medium text-slate-600 bg-white/90 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-xs">
-                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                        <span>2. Students &bull; 375 &times; 812</span>
-                    </div>
-
-                    <div onclick="focusScreenFromGallery('teacher-all-students')" title="Click to interact with Students" class="relative w-[375px] max-w-[92vw] h-[812px] bg-white rounded-[48px] shadow-[0_20px_50px_rgba(15,23,42,0.12)] border-[10px] border-slate-900 overflow-hidden flex flex-col justify-between shrink-0 cursor-pointer transition-all duration-300 group-hover:-translate-y-1.5 group-hover:ring-4 group-hover:ring-indigo-500/30">
-                        <!-- Status Bar -->
-                        <div class="w-full pt-3 pb-2 px-6 flex items-center justify-between bg-white text-slate-900 z-10 select-none">
-                            <span class="text-xs font-semibold tracking-tight">9:41</span>
-                            <div class="w-24 h-6 bg-slate-900 rounded-full"></div>
-                            <div class="flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21L15.6 16.2C14.6 15.45 13.35 15 12 15C10.65 15 9.4 15.45 8.4 16.2L12 21ZM12 3C7.95 3 4.21 4.34 1.2 6.6L3 9C5.5 7.12 8.62 6 12 6C15.38 6 18.5 7.12 21 9L22.8 6.6C19.79 4.34 16.05 3 12 3ZM12 9C9.3 9 6.81 9.89 4.8 11.4L6.6 13.8C8.1 12.67 9.97 12 12 12C14.03 12 15.9 12.67 17.4 13.8L19.2 11.4C17.19 9.89 14.7 9 12 9Z"/></svg>
-                                <div class="w-5 h-2.5 border border-slate-900 rounded-[3px] p-[1px] flex items-center">
-                                    <div class="w-full h-full bg-slate-900 rounded-[1px]"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Content Preview (Matches screen-teacher-all-students 1-to-1) -->
-                        <div class="flex-1 px-6 py-4 flex flex-col justify-between overflow-hidden bg-white text-slate-900 pointer-events-none">
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between pt-1">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                                            </svg>
-                                        </div>
-                                        <span class="text-base font-bold tracking-tight text-indigo-600 uppercase leading-none">Study Manager</span>
-                                    </div>
-                                    <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between pt-0.5">
-                                    <h1 class="text-xl font-bold text-slate-900 leading-tight">Students</h1>
-                                    <span data-gallery-students-total class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">0 Total</span>
-                                </div>
-
-                                <!-- Gallery Preview: Search Bar at Top of Students -->
-                                <div class="relative">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
-                                    </svg>
-                                    <div class="w-full pl-10 pr-9 py-3 rounded-full bg-slate-50 border border-slate-200 text-sm text-slate-400">
-                                        Search added students...
-                                    </div>
-                                </div>
-
-                                <!-- Gallery Preview: Filter Pills Below Search Bar -->
-                                <div class="space-y-2">
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <span class="px-4 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">All</span>
-                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">I</span>
-                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">II</span>
-                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">III</span>
-                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">IV</span>
-                                    </div>
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">V</span>
-                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">VI</span>
-                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">VII</span>
-                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">VIII</span>
-                                    </div>
-                                </div>
-
-                                <!-- Gallery Preview: Add Students Section -->
-                                <div class="space-y-3.5 pt-7">
-                                    <div class="flex items-center gap-2.5 border-b border-slate-200 pb-2">
-                                        <span class="w-1.5 h-5 rounded-full bg-indigo-600"></span>
-                                        <h2 class="text-base font-bold uppercase tracking-wider text-slate-900">Add Students</h2>
-                                    </div>
-
-                                    <div class="space-y-2.5">
-                                        <h3 class="text-sm font-bold text-slate-800 tracking-tight">Add Students Page</h3>
-                                        <div class="rounded-2xl bg-indigo-50/60 border border-indigo-200/80 p-4 space-y-3 shadow-2xs">
-                                            <div class="flex items-center gap-2.5">
-                                                <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                    </svg>
-                                                </div>
-                                                <p class="text-xs font-medium text-slate-600 leading-snug">Google Sheet must be set to <span class="font-semibold text-slate-800">&ldquo;Anyone with the link &rarr; Viewer&rdquo;</span></p>
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <div class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-400 truncate">Paste Google Sheet URL...</div>
-                                                <div class="px-3.5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold shadow-2xs shrink-0">
-                                                    Check &amp; Import
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="space-y-2.5 pt-2">
-                                        <h3 class="text-sm font-bold text-slate-800 tracking-tight">Add Individual Student</h3>
-                                        <div class="rounded-2xl bg-slate-50/90 border border-slate-200/90 p-4 space-y-3 shadow-xs">
-                                            <div class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-base text-slate-400">Name</div>
-                                            <div class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-base text-slate-400">Email</div>
-                                        </div>
-                                    </div>
+                                <div class="rounded-2xl bg-indigo-50/80 border border-indigo-200/80 p-4">
+                                    <p class="text-xs font-bold uppercase tracking-wider text-indigo-600">Institution Control</p>
+                                    <p class="text-sm font-semibold text-slate-900 mt-1">Manage Teachers &amp; Access</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">Authorize faculty Google accounts for Study Manager.</p>
                                 </div>
                             </div>
                         </div>
@@ -776,7 +649,7 @@
                 </div>
             </div>
 
-            <!-- ROLE GROUP: Teacher Screens -->
+            <!-- ROLE GROUP: Teacher Screens (100% Live-Mirrored from Interactive Screens) -->
             <div data-role-group="teacher" class="hidden flex flex-wrap items-start justify-center gap-10">
                 <!-- TEACHER SCREEN 1: Teacher Dashboard -->
                 <div class="flex flex-col items-center group">
@@ -798,65 +671,8 @@
                             </div>
                         </div>
 
-                        <!-- Content Preview -->
-                        <div class="flex-1 px-6 py-4 flex flex-col justify-between overflow-hidden bg-white text-slate-900 pointer-events-none">
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between pt-1">
-                                    <div class="flex items-center gap-2.5">
-                                        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                                                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <span class="text-[10px] font-bold tracking-wider text-indigo-600 uppercase block leading-none">Study Manager</span>
-                                            <h1 class="text-base font-bold text-slate-900 leading-tight mt-0.5">Teacher Portal</h1>
-                                        </div>
-                                    </div>
-                                    <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <!-- Gallery Preview: Welcome & Date/Holiday Card -->
-                                <div class="rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-slate-50 border border-indigo-200/80 p-3.5 space-y-2 shadow-2xs">
-                                    <div class="flex items-start justify-between gap-2">
-                                        <div class="min-w-0">
-                                            <p class="text-xs font-bold text-slate-900 truncate">Welcome, Dr. Ananya Sharma</p>
-                                            <p class="text-[11px] font-medium text-indigo-600">Faculty Member &bull; Teacher</p>
-                                        </div>
-                                        <span id="gallery-teacher-status-pill" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-800 border border-amber-200/80 shrink-0">Holiday</span>
-                                    </div>
-                                    <p id="gallery-teacher-date-text" class="text-[11px] font-medium text-slate-600 pt-1.5 border-t border-indigo-100/80">Today is Saturday, 21 November 2026</p>
-                                    <p id="gallery-teacher-holiday-text" class="text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200/80 rounded-lg px-2.5 py-1.5">Today is a holiday: Saturday (Weekly Holiday)</p>
-                                </div>
-
-                                <!-- Gallery Preview: Students Button -->
-                                <div class="w-full p-3.5 rounded-2xl bg-indigo-50/90 border border-indigo-200/80 shadow-2xs flex items-center justify-between">
-                                    <div class="flex items-center gap-2.5">
-                                        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                        </div>
-                                        <div class="text-left">
-                                            <span class="text-xs font-bold text-slate-900 block leading-tight">Students</span>
-                                            <span class="text-[10px] text-slate-500 block mt-0.5">Add, view &amp; manage enrolled students</span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-1.5 shrink-0">
-                                        <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full">2 Added</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Mirrored Live Content from #screen-teacher-dashboard -->
+                        <div data-mirror-screen="screen-teacher-dashboard" class="flex-1 flex flex-col overflow-hidden bg-white text-slate-900 pointer-events-none"></div>
 
                         <!-- Home Indicator -->
                         <div class="w-full pb-2 pt-1 bg-white flex justify-center shrink-0">
@@ -865,7 +681,7 @@
                     </div>
                 </div>
 
-                <!-- TEACHER SCREEN 2: Students (Search, Add & Manage) -->
+                <!-- TEACHER SCREEN 2: Students (Search, Filter & Add) -->
                 <div class="flex flex-col items-center group">
                     <div class="mb-3 flex items-center gap-2 text-xs font-medium text-slate-600 bg-white/90 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-xs">
                         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
@@ -885,96 +701,40 @@
                             </div>
                         </div>
 
-                        <!-- Content Preview -->
-                        <div class="flex-1 px-6 py-4 flex flex-col justify-between overflow-hidden bg-white text-slate-900 pointer-events-none">
-                            <div class="space-y-3">
-                                <div class="flex items-center justify-between pt-1">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                                            </svg>
-                                        </div>
-                                        <span class="text-base font-bold tracking-tight text-indigo-600 uppercase leading-none">Study Manager</span>
-                                    </div>
-                                    <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                    </div>
-                                </div>
+                        <!-- Mirrored Live Content from #screen-teacher-all-students -->
+                        <div data-mirror-screen="screen-teacher-all-students" class="flex-1 flex flex-col overflow-hidden bg-white text-slate-900 pointer-events-none"></div>
 
-                                <div class="flex items-center justify-between">
-                                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Students</h1>
-                                    <span class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Select Filter</span>
-                                </div>
+                        <!-- Home Indicator -->
+                        <div class="w-full pb-2 pt-1 bg-white flex justify-center shrink-0">
+                            <div class="w-32 h-1 bg-slate-900 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                <!-- Gallery Preview: Search Bar at Top of Students -->
-                                <div class="relative">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
-                                    </svg>
-                                    <div class="w-full pl-8 pr-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-400">
-                                        Search added students...
-                                    </div>
-                                </div>
+            <!-- ROLE GROUP: Student Screens -->
+            <div data-role-group="student" class="hidden flex flex-wrap items-start justify-center gap-10">
+                <div class="flex flex-col items-center group">
+                    <div class="mb-3 flex items-center gap-2 text-xs font-medium text-slate-600 bg-white/90 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span>Student Dashboard &bull; 375 &times; 812</span>
+                    </div>
 
-                                <!-- Gallery Preview: Filter Pills Below Search Bar (None selected by default) -->
-                                <div class="space-y-1">
-                                    <div class="flex items-center justify-center gap-1">
-                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">All</span>
-                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">I</span>
-                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">II</span>
-                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">III</span>
-                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">IV</span>
-                                    </div>
-                                    <div class="flex items-center justify-center gap-1">
-                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">V</span>
-                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">VI</span>
-                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">VII</span>
-                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">VIII</span>
-                                    </div>
-                                </div>
-
-                                <!-- Gallery Preview: Add Students Form -->
-                                <div class="space-y-2 pt-0.5">
-                                    <div class="flex items-center gap-1.5 border-b border-slate-200 pb-1">
-                                        <span class="w-1 h-3.5 rounded-full bg-indigo-600"></span>
-                                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900">Add Students</h2>
-                                    </div>
-                                    <div class="space-y-1">
-                                        <p class="text-[11px] font-bold text-slate-800">Add Students Page</p>
-                                        <div class="rounded-2xl bg-indigo-50/60 border border-indigo-200/80 p-2.5 space-y-1.5">
-                                            <div class="flex items-center gap-1">
-                                                <div class="flex-1 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-[10px] text-slate-400 truncate">Paste Google Sheet URL...</div>
-                                                <div class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white text-[10px] font-semibold">Import</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p class="text-[11px] font-bold text-slate-800 pt-0.5">Add Individual Student</p>
-                                    <div class="rounded-2xl bg-slate-50/90 border border-slate-200/90 p-3 space-y-2 shadow-xs">
-                                        <div class="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-400">Name</div>
-                                        <div class="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-400">Email</div>
-                                        <div class="grid grid-cols-4 gap-1">
-                                            <div class="py-1 rounded-lg bg-indigo-600 text-white text-[11px] font-bold text-center">I</div>
-                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">II</div>
-                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">III</div>
-                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">IV</div>
-                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">V</div>
-                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">VI</div>
-                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">VII</div>
-                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">VIII</div>
-                                        </div>
-                                        <div class="flex justify-end">
-                                            <div class="py-1.5 px-3.5 bg-slate-600 text-white text-center font-semibold text-xs rounded-xl">
-                                                Add Student
-                                            </div>
-                                        </div>
-                                    </div>
+                    <div onclick="focusScreenFromGallery('student-dashboard')" title="Click to interact with Student Dashboard" class="relative w-[375px] max-w-[92vw] h-[812px] bg-white rounded-[48px] shadow-[0_20px_50px_rgba(15,23,42,0.12)] border-[10px] border-slate-900 overflow-hidden flex flex-col justify-between shrink-0 cursor-pointer transition-all duration-300 group-hover:-translate-y-1.5 group-hover:ring-4 group-hover:ring-indigo-500/30">
+                        <!-- Status Bar -->
+                        <div class="w-full pt-3 pb-2 px-6 flex items-center justify-between bg-white text-slate-900 z-10 select-none">
+                            <span class="text-xs font-semibold tracking-tight">9:41</span>
+                            <div class="w-24 h-6 bg-slate-900 rounded-full"></div>
+                            <div class="flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21L15.6 16.2C14.6 15.45 13.35 15 12 15C10.65 15 9.4 15.45 8.4 16.2L12 21ZM12 3C7.95 3 4.21 4.34 1.2 6.6L3 9C5.5 7.12 8.62 6 12 6C15.38 6 18.5 7.12 21 9L22.8 6.6C19.79 4.34 16.05 3 12 3ZM12 9C9.3 9 6.81 9.89 4.8 11.4L6.6 13.8C8.1 12.67 9.97 12 12 12C14.03 12 15.9 12.67 17.4 13.8L19.2 11.4C17.19 9.89 14.7 9 12 9Z"/></svg>
+                                <div class="w-5 h-2.5 border border-slate-900 rounded-[3px] p-[1px] flex items-center">
+                                    <div class="w-full h-full bg-slate-900 rounded-[1px]"></div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Mirrored Live Content from #screen-student-dashboard -->
+                        <div data-mirror-screen="screen-student-dashboard" class="flex-1 flex flex-col overflow-hidden bg-white text-slate-900 pointer-events-none"></div>
 
                         <!-- Home Indicator -->
                         <div class="w-full pb-2 pt-1 bg-white flex justify-center shrink-0">
@@ -1280,17 +1040,174 @@
         let currentUserSession = null;
         let selectedStudentSem = 'I';
         let activeStudentFilterSem = null;
-        let pendingDeleteTeacherId = null;
         let pendingDeleteStudentId = null;
         let linkedStudentSheetUrl = '';
         let addStudentFeedbackTimer = null;
+        let teacherCalendarMonth = new Date().getMonth();
 
         function isDesignStudioMode() {
             const params = new URLSearchParams(window.location.search);
             if (params.get('design') === 'true') return true;
             if (params.get('production') === 'true') return false;
-            const host = window.location.hostname || '';
-            return host === 'localhost' || host === '127.0.0.1' || host.includes('usercontent') || host.includes('webcontainer') || host === '';
+            return window.self !== window.top;
+        }
+
+        function updateTeacherWelcomeSection() {
+            const welcomeEl = document.getElementById('teacher-welcome-name');
+            const dateEl = document.getElementById('teacher-today-date');
+            const pillEl = document.getElementById('teacher-today-status-pill');
+            const bannerEl = document.getElementById('teacher-holiday-banner');
+            const holidayTextEl = document.getElementById('teacher-holiday-text');
+
+            const teacherName = (currentUserSession && currentUserSession.role === 'teacher' && currentUserSession.name)
+                ? currentUserSession.name
+                : 'Teacher';
+            if (welcomeEl) {
+                welcomeEl.textContent = `Welcome, ${teacherName}`;
+            }
+
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('en-IN', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            if (dateEl) {
+                dateEl.textContent = `Today is ${formattedDate}`;
+            }
+
+            const holidayStatus = typeof window.checkHoliday2026 === 'function'
+                ? window.checkHoliday2026(now)
+                : { isHoliday: false, reason: null };
+
+            if (holidayStatus.isHoliday) {
+                if (pillEl) {
+                    pillEl.textContent = 'Holiday';
+                    pillEl.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-600 border border-rose-200/80 shrink-0';
+                }
+                if (bannerEl) bannerEl.classList.remove('hidden');
+                if (holidayTextEl) {
+                    holidayTextEl.textContent = `Today is a holiday: ${holidayStatus.reason}`;
+                }
+            } else {
+                if (pillEl) {
+                    pillEl.textContent = 'Working Day';
+                    pillEl.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0';
+                }
+                if (bannerEl) bannerEl.classList.add('hidden');
+            }
+        }
+
+        function updateProfilePopovers(session) {
+            if (!session) return;
+            document.querySelectorAll('[data-profile-name]').forEach((el) => {
+                el.textContent = session.name || 'User';
+            });
+            document.querySelectorAll('[data-profile-email]').forEach((el) => {
+                el.textContent = session.email || '';
+            });
+            document.querySelectorAll('[data-profile-level]').forEach((el) => {
+                el.textContent = session.roleLabel || 'User';
+            });
+        }
+
+        window.toggleProfileMenu = function (screenKey, event) {
+            if (event) event.stopPropagation();
+            const target = document.getElementById(`profile-popover-${screenKey}`);
+            document.querySelectorAll('[data-profile-popover]').forEach((pop) => {
+                if (pop !== target) pop.classList.add('hidden');
+            });
+            if (target) target.classList.toggle('hidden');
+        };
+
+        window.promptLogout = function (screenKey) {
+            const pop = document.getElementById(`profile-popover-${screenKey}`);
+            if (!pop) return;
+            const trigger = pop.querySelector('[data-logout-trigger]');
+            const warning = pop.querySelector('[data-logout-warning]');
+            if (trigger) trigger.classList.add('hidden');
+            if (warning) warning.classList.remove('hidden');
+        };
+
+        window.cancelLogout = function (screenKey) {
+            const pop = document.getElementById(`profile-popover-${screenKey}`);
+            if (!pop) return;
+            const trigger = pop.querySelector('[data-logout-trigger]');
+            const warning = pop.querySelector('[data-logout-warning]');
+            if (warning) warning.classList.add('hidden');
+            if (trigger) trigger.classList.remove('hidden');
+        };
+
+        window.confirmLogout = function () {
+            currentUserSession = null;
+            document.querySelectorAll('[data-profile-popover]').forEach((pop) => pop.classList.add('hidden'));
+            switchScreen('login');
+        };
+
+        window.toggleScreensDropdown = function () {
+            const menu = document.getElementById('user-roles-dropdown');
+            const chevron = document.getElementById('dropdown-chevron');
+            if (!menu) return;
+            menu.classList.toggle('hidden');
+            if (chevron) chevron.classList.toggle('rotate-180');
+        };
+
+        window.selectUserRoleFromDropdown = function (roleKey) {
+            const singleView = document.getElementById('single-view-container');
+            const galleryView = document.getElementById('all-screens-gallery');
+            const menu = document.getElementById('user-roles-dropdown');
+            const chevron = document.getElementById('dropdown-chevron');
+            const pill = document.getElementById('active-role-pill');
+            const titleEl = document.getElementById('role-gallery-title');
+
+            if (menu) menu.classList.add('hidden');
+            if (chevron) chevron.classList.remove('rotate-180');
+            if (singleView) singleView.classList.add('hidden');
+            if (galleryView) galleryView.classList.remove('hidden');
+
+            const roleLabels = {
+                login: 'Common Login',
+                admin: 'Super Admin',
+                teacher: 'Teacher',
+                student: 'Student'
+            };
+            if (pill) pill.textContent = roleLabels[roleKey] || 'Common Login';
+            if (titleEl) titleEl.textContent = `${roleLabels[roleKey] || 'Common Login'} Screens`;
+
+            ['login', 'admin', 'teacher', 'student'].forEach((key) => {
+                const item = document.getElementById(`dropdown-item-${key}`);
+                if (!item) return;
+                item.className = key === roleKey
+                    ? 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold bg-indigo-50 text-indigo-700 transition cursor-pointer mt-0.5'
+                    : 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer mt-0.5';
+            });
+
+            document.querySelectorAll('[data-role-group]').forEach((group) => {
+                const isMatch = group.getAttribute('data-role-group') === roleKey;
+                group.classList.toggle('hidden', !isMatch);
+            });
+
+            syncGalleryMirrors();
+        };
+
+        window.focusScreenFromGallery = function (screenKey) {
+            switchScreen(screenKey);
+        };
+
+        function syncGalleryMirrors() {
+            updateTeacherWelcomeSection();
+            document.querySelectorAll('[data-mirror-screen]').forEach((slot) => {
+                const sourceId = slot.getAttribute('data-mirror-screen');
+                const sourceEl = document.getElementById(sourceId);
+                if (!sourceEl) return;
+                const clone = sourceEl.cloneNode(true);
+                clone.classList.remove('hidden');
+                clone.removeAttribute('id');
+                clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+                slot.innerHTML = '';
+                slot.appendChild(clone);
+            });
         }
 
         function applyEnvironmentMode() {
@@ -1301,6 +1218,7 @@
                 document.body.classList.remove('production-mode');
                 if (singleView) singleView.classList.add('hidden');
                 if (galleryView) galleryView.classList.remove('hidden');
+                syncGalleryMirrors();
             } else {
                 document.body.classList.add('production-mode');
                 if (galleryView) galleryView.classList.add('hidden');
@@ -1361,6 +1279,7 @@
                 'screen-admin-dashboard',
                 'screen-teacher-dashboard',
                 'screen-teacher-all-students',
+                'screen-teacher-calendar',
                 'screen-student-dashboard'
             ];
             screens.forEach((id) => {
@@ -1377,6 +1296,7 @@
                 'screen-admin-dashboard': 'Super Admin • 375 × 812 px',
                 'screen-teacher-dashboard': 'Teacher Dashboard • 375 × 812 px',
                 'screen-teacher-all-students': 'Students • 375 × 812 px',
+                'screen-teacher-calendar': 'Holiday Calendar • 375 × 812 px',
                 'screen-student-dashboard': 'Student Portal • 375 × 812 px'
             };
             const indicator = document.getElementById('screen-indicator');
@@ -1384,6 +1304,8 @@
 
             if (targetId === 'screen-teacher-dashboard') {
                 updateTeacherWelcomeSection();
+            } else if (targetId === 'screen-teacher-calendar') {
+                renderTeacherCalendar();
             } else if (targetId === 'screen-teacher-all-students') {
                 renderAllStudentsScreen();
                 if (linkedStudentSheetUrl) {
@@ -1392,128 +1314,73 @@
             }
         };
 
-        window.focusScreenFromGallery = function (screenKey) {
-            switchScreen(screenKey);
+        window.openTeacherCalendarScreen = function () {
+            teacherCalendarMonth = new Date().getMonth();
+            switchScreen('teacher-calendar');
         };
 
-        window.toggleScreensDropdown = function () {
-            const menu = document.getElementById('user-roles-dropdown');
-            const chevron = document.getElementById('dropdown-chevron');
-            if (!menu) return;
-            const isHidden = menu.classList.contains('hidden');
-            menu.classList.toggle('hidden', !isHidden);
-            if (chevron) chevron.classList.toggle('rotate-180', isHidden);
+        window.changeTeacherCalendarMonth = function (delta) {
+            const nextMonth = teacherCalendarMonth + delta;
+            if (nextMonth < 0 || nextMonth > 11) return;
+            teacherCalendarMonth = nextMonth;
+            renderTeacherCalendar();
         };
 
-        window.selectUserRoleFromDropdown = function (roleKey) {
-            const menu = document.getElementById('user-roles-dropdown');
-            const chevron = document.getElementById('dropdown-chevron');
-            if (menu) menu.classList.add('hidden');
-            if (chevron) chevron.classList.remove('rotate-180');
+        function renderTeacherCalendar() {
+            const year = 2026;
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            const labelEl = document.getElementById('teacher-calendar-month-label');
+            const prevBtn = document.getElementById('teacher-calendar-prev-btn');
+            const nextBtn = document.getElementById('teacher-calendar-next-btn');
+            const gridEl = document.getElementById('teacher-calendar-days-grid');
+            const listEl = document.getElementById('teacher-calendar-month-holidays');
+            if (!gridEl || !listEl) return;
 
-            const singleView = document.getElementById('single-view-container');
-            const galleryView = document.getElementById('all-screens-gallery');
-            if (singleView) singleView.classList.add('hidden');
-            if (galleryView) galleryView.classList.remove('hidden');
+            if (labelEl) labelEl.textContent = `${monthNames[teacherCalendarMonth]} ${year}`;
+            if (prevBtn) prevBtn.classList.toggle('invisible', teacherCalendarMonth === 0);
+            if (nextBtn) nextBtn.classList.toggle('invisible', teacherCalendarMonth === 11);
 
-            document.querySelectorAll('[data-role-group]').forEach((grp) => {
-                grp.classList.toggle('hidden', grp.getAttribute('data-role-group') !== roleKey);
-            });
+            const firstDay = (new Date(year, teacherCalendarMonth, 1).getDay() + 6) % 7;
+            const daysInMonth = new Date(year, teacherCalendarMonth + 1, 0).getDate();
+            const today = new Date();
+            const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-            const roleNames = {
-                login: 'Common Login',
-                admin: 'Super Admin',
-                teacher: 'Teacher',
-                student: 'Student'
-            };
-            const pill = document.getElementById('active-role-pill');
-            const title = document.getElementById('role-gallery-title');
-            if (pill) pill.textContent = roleNames[roleKey] || 'Common Login';
-            if (title) title.textContent = `${roleNames[roleKey] || 'Common Login'} Screens`;
-        };
-
-        window.toggleProfileMenu = function (contextKey, event) {
-            if (event) event.stopPropagation();
-            const targetPopover = document.getElementById(`profile-popover-${contextKey}`);
-            document.querySelectorAll('[data-profile-popover]').forEach((pop) => {
-                if (pop !== targetPopover) pop.classList.add('hidden');
-            });
-            if (targetPopover) {
-                targetPopover.classList.toggle('hidden');
-                cancelLogout(contextKey);
+            let cellsHtml = '';
+            for (let i = 0; i < firstDay; i++) {
+                cellsHtml += `<div class="h-9"></div>`;
             }
-        };
 
-        window.promptLogout = function (contextKey) {
-            const pop = document.getElementById(`profile-popover-${contextKey}`);
-            if (!pop) return;
-            const trigger = pop.querySelector('[data-logout-trigger]');
-            const warning = pop.querySelector('[data-logout-warning]');
-            if (trigger) trigger.classList.add('hidden');
-            if (warning) warning.classList.remove('hidden');
-        };
-
-        window.cancelLogout = function (contextKey) {
-            const pop = document.getElementById(`profile-popover-${contextKey}`);
-            if (!pop) return;
-            const trigger = pop.querySelector('[data-logout-trigger]');
-            const warning = pop.querySelector('[data-logout-warning]');
-            if (warning) warning.classList.add('hidden');
-            if (trigger) trigger.classList.remove('hidden');
-        };
-
-        window.confirmLogout = function () {
-            currentUserSession = null;
-            document.querySelectorAll('[data-profile-popover]').forEach((pop) => pop.classList.add('hidden'));
-            hideFeedback('common-auth-feedback');
-            switchScreen('login');
-        };
-
-        function updateProfilePopovers(session) {
-            if (!session) return;
-            document.querySelectorAll('[data-profile-name]').forEach((el) => { el.textContent = session.name; });
-            document.querySelectorAll('[data-profile-email]').forEach((el) => { el.textContent = session.email; });
-            document.querySelectorAll('[data-profile-level]').forEach((el) => { el.textContent = session.roleLabel; });
-        }
-
-        function updateTeacherWelcomeSection() {
-            const teacherName = (currentUserSession && currentUserSession.name) ? currentUserSession.name : 'Teacher';
-            const welcomeNameEl = document.getElementById('teacher-welcome-name');
-            const todayDateEl = document.getElementById('teacher-today-date');
-            const statusPillEl = document.getElementById('teacher-today-status-pill');
-            const holidayBannerEl = document.getElementById('teacher-holiday-banner');
-            const holidayTextEl = document.getElementById('teacher-holiday-text');
-
-            if (welcomeNameEl) welcomeNameEl.textContent = `Welcome, ${teacherName}`;
-
-            const now = new Date();
-            const formattedDate = now.toLocaleDateString('en-IN', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-            if (todayDateEl) todayDateEl.textContent = `Today is ${formattedDate}`;
-
-            const holidayInfo = window.checkHoliday2026(now);
-            if (holidayInfo.isHoliday) {
-                if (statusPillEl) {
-                    statusPillEl.textContent = 'Holiday';
-                    statusPillEl.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/80 shrink-0';
+            const monthGazetted = [];
+            for (let day = 1; day <= daysInMonth; day++) {
+                const iso = `${year}-${String(teacherCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const info = window.checkHoliday2026(iso);
+                const gazettedName = window.WB_GAZETTED_HOLIDAYS_2026[iso];
+                if (gazettedName) {
+                    monthGazetted.push({ day, iso, name: gazettedName });
                 }
-                if (holidayTextEl) holidayTextEl.textContent = `Today is a holiday: ${holidayInfo.reason}`;
-                if (holidayBannerEl) holidayBannerEl.classList.remove('hidden');
+
+                const isToday = iso === todayIso;
+                const cellStyle = info.isHoliday
+                    ? 'bg-rose-50 text-rose-600 font-bold border border-rose-200/80'
+                    : 'text-slate-700 font-medium';
+                const todayRing = isToday ? 'ring-2 ring-indigo-600' : '';
+
+                cellsHtml += `<div title="${escapeHtml(info.reason || 'Working Day')}" class="h-9 rounded-xl flex items-center justify-center text-sm ${cellStyle} ${todayRing}">${day}</div>`;
+            }
+            gridEl.innerHTML = cellsHtml;
+
+            if (monthGazetted.length === 0) {
+                listEl.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-400">Only Saturday &amp; Sunday weekly holidays in ${monthNames[teacherCalendarMonth]}.</div>`;
             } else {
-                if (statusPillEl) {
-                    statusPillEl.textContent = 'Working Day';
-                    statusPillEl.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0';
-                }
-                if (holidayBannerEl) holidayBannerEl.classList.add('hidden');
-            }
-
-            const countBadge = document.getElementById('student-count-badge');
-            if (countBadge) {
-                countBadge.textContent = `${window.addedStudents.length} Added`;
+                listEl.innerHTML = monthGazetted.map((h) => `
+                    <div class="rounded-2xl bg-rose-50/70 border border-rose-200/80 px-3.5 py-2.5 flex items-center justify-between gap-2">
+                        <span class="text-sm font-semibold text-slate-900">${escapeHtml(h.name)}</span>
+                        <span class="text-xs font-bold text-rose-600 bg-white px-2.5 py-1 rounded-full border border-rose-200 shrink-0">${h.day} ${monthNames[teacherCalendarMonth].slice(0, 3)}</span>
+                    </div>
+                `).join('');
             }
         }
 
@@ -1715,10 +1582,122 @@
         }
 
         function normalizeSemesterToken(raw) {
-            const val = String(raw || '').toUpperCase().replace(/SEMESTER|SEM/g, '').trim();
-            const map = { '1': 'I', '2': 'II', '3': 'III', '4': 'IV', '5': 'V', '6': 'VI', '7': 'VII', '8': 'VIII' };
+            const val = String(raw || '').toUpperCase().replace(/SEMESTER|SEM|TH|ST|ND|RD/g, '').trim();
+            const map = {
+                '1': 'I', 'ONE': 'I', 'FIRST': 'I',
+                '2': 'II', 'TWO': 'II', 'SECOND': 'II',
+                '3': 'III', 'THREE': 'III', 'THIRD': 'III',
+                '4': 'IV', 'FOUR': 'IV', 'FOURTH': 'IV',
+                '5': 'V', 'FIVE': 'V', 'FIFTH': 'V',
+                '6': 'VI', 'SIX': 'VI', 'SIXTH': 'VI',
+                '7': 'VII', 'SEVEN': 'VII', 'SEVENTH': 'VII',
+                '8': 'VIII', 'EIGHT': 'VIII', 'EIGHTH': 'VIII'
+            };
             const normalized = map[val] || val;
             return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'].includes(normalized) ? normalized : 'I';
+        }
+
+        /**
+         * Uses Gemini AI (gemini-3-flash-preview) with structured JSON output to:
+         * 1. Properly capitalize student names (e.g., "rahul sharma" / "ANANYA ROY" -> "Rahul Sharma" / "Ananya Roy").
+         * 2. Normalize any semester representation (Arabic digits 1-8, ordinals like "3rd", words like "Fourth",
+         *    or mixed formats) into standard Roman numerals ("I" through "VIII").
+         * Includes exponential backoff and graceful local fallback.
+         */
+        async function normalizeImportedStudentsWithAI(rawCandidates) {
+            if (!Array.isArray(rawCandidates) || rawCandidates.length === 0) return [];
+
+            const fallbackNormalize = (items) =>
+                items.map((item) => ({
+                    name: String(item.name || '')
+                        .trim()
+                        .toLowerCase()
+                        .replace(/\b([a-zA-Z])/g, (m) => m.toUpperCase()),
+                    email: String(item.email || '').trim().toLowerCase(),
+                    semester: normalizeSemesterToken(item.semester)
+                }));
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = [
+                "You are a data normalization assistant for an academic student roster.",
+                "For each student entry provided:",
+                "1. Properly capitalize their full name in clean Title Case (e.g., 'arindam sen' -> 'Arindam Sen', 'PRIYA DAS' -> 'Priya Das', 'md. rahman' -> 'Md. Rahman').",
+                "2. Keep the email address lowercase and unchanged.",
+                "3. Convert the semester value—whether written as an Arabic numeral ('1', '2', '8'), ordinal ('3rd', '4th'), word ('Fifth'), Bengali/Hindi numeral, or prefixed ('Sem 6', 'Semester 2')—into an uppercase Roman numeral strictly from: I, II, III, IV, V, VI, VII, VIII. Default to 'I' if unclear."
+            ].join(" ");
+
+            const payload = {
+                contents: [
+                    {
+                        role: "user",
+                        parts: [{ text: JSON.stringify(rawCandidates) }]
+                    }
+                ],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                name: { type: "STRING" },
+                                email: { type: "STRING" },
+                                semester: {
+                                    type: "STRING",
+                                    enum: ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
+                                }
+                            },
+                            required: ["name", "email", "semester"]
+                        }
+                    }
+                }
+            };
+
+            const delays = [1000, 2000, 4000];
+            for (let attempt = 0; attempt <= delays.length; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (attempt < delays.length && (response.status === 429 || response.status >= 500)) {
+                            await new Promise((res) => setTimeout(res, delays[attempt]));
+                            continue;
+                        }
+                        return fallbackNormalize(rawCandidates);
+                    }
+
+                    const result = await response.json();
+                    const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!jsonText) return fallbackNormalize(rawCandidates);
+
+                    const parsed = JSON.parse(jsonText);
+                    if (!Array.isArray(parsed) || parsed.length === 0) {
+                        return fallbackNormalize(rawCandidates);
+                    }
+
+                    return parsed.map((item, idx) => ({
+                        name: (item.name || fallbackNormalize([rawCandidates[idx]])[0].name).trim(),
+                        email: (item.email || rawCandidates[idx]?.email || '').trim().toLowerCase(),
+                        semester: normalizeSemesterToken(item.semester || rawCandidates[idx]?.semester)
+                    }));
+                } catch (err) {
+                    if (attempt < delays.length) {
+                        await new Promise((res) => setTimeout(res, delays[attempt]));
+                    } else {
+                        return fallbackNormalize(rawCandidates);
+                    }
+                }
+            }
+            return fallbackNormalize(rawCandidates);
         }
 
         window.handleImportStudentGoogleSheet = async function (isManualTrigger = true) {
@@ -1741,7 +1720,7 @@
             }
 
             const btn = document.getElementById('student-sheet-sync-btn');
-            if (isManualTrigger && btn) btn.textContent = 'Checking...';
+            if (isManualTrigger && btn) btn.textContent = 'Importing...';
 
             try {
                 const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
@@ -1776,22 +1755,37 @@
                 }
 
                 const existingEmails = new Set(window.addedStudents.map((s) => (s.email || '').toLowerCase()));
-                let addedCount = 0;
+                const rawCandidates = [];
+                const seenInBatch = new Set();
 
                 for (let i = 1; i < rows.length; i++) {
                     const r = rows[i];
-                    const name = (r[nameIdx] || '').trim().replace(/\b([a-zA-Z])/g, (m) => m.toUpperCase());
+                    const rawName = (r[nameIdx] || '').trim();
                     const email = (r[emailIdx] || '').trim().toLowerCase();
-                    const semester = semIdx !== -1 ? normalizeSemesterToken(r[semIdx]) : 'I';
+                    const rawSemester = semIdx !== -1 ? (r[semIdx] || '').trim() : 'I';
 
-                    if (!name || !isAllowedGoogleDomain(email) || existingEmails.has(email)) continue;
+                    if (!rawName || !isAllowedGoogleDomain(email) || existingEmails.has(email) || seenInBatch.has(email)) continue;
 
-                    const studentId = email.replace(/[^a-z0-9]/g, '_');
+                    seenInBatch.add(email);
+                    rawCandidates.push({
+                        name: rawName,
+                        email,
+                        semester: rawSemester || 'I'
+                    });
+                }
+
+                const normalizedStudents = await normalizeImportedStudentsWithAI(rawCandidates);
+                let addedCount = 0;
+
+                for (const student of normalizedStudents) {
+                    if (!student.name || !isAllowedGoogleDomain(student.email) || existingEmails.has(student.email)) continue;
+
+                    const studentId = student.email.replace(/[^a-z0-9]/g, '_');
                     const studentRecord = {
                         id: studentId,
-                        name,
-                        email,
-                        semester,
+                        name: student.name,
+                        email: student.email,
+                        semester: student.semester,
                         addedByEmail: (currentUserSession && currentUserSession.email) || '',
                         addedByName: (currentUserSession && currentUserSession.name) || 'Teacher',
                         source: 'google-sheet',
@@ -1803,7 +1797,7 @@
                     } else {
                         window.addedStudents.push(studentRecord);
                     }
-                    existingEmails.add(email);
+                    existingEmails.add(student.email);
                     addedCount++;
                 }
 
@@ -1834,7 +1828,7 @@
                     showFeedback('student-sheet-feedback', 'error', 'Could not reach Google Sheet. Verify link and public Viewer access.');
                 }
             } finally {
-                if (isManualTrigger && btn) btn.textContent = 'Check & Import';
+                if (isManualTrigger && btn) btn.textContent = 'Import';
             }
         };
 
@@ -1977,6 +1971,7 @@
 
             if (filtered.length === 0) {
                 listEl.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-200 py-6 px-4 text-center text-sm text-slate-400">No students match this filter.</div>`;
+                syncGalleryMirrors();
                 return;
             }
 
@@ -1996,6 +1991,7 @@
                     </button>
                 </div>
             `).join('');
+            syncGalleryMirrors();
         };
 
         document.addEventListener('click', (e) => {
