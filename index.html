@@ -127,18 +127,18 @@
                     <!-- Top App Bar -->
                     <div class="flex items-center justify-between pt-1 relative">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path d="M12 14l9-5-9-5-9 5 9 5z" />
                                     <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                                 </svg>
                             </div>
                             <div>
-                                <span class="text-[10px] font-bold tracking-wider text-indigo-600 uppercase block leading-none">Study Manager</span>
-                                <h1 id="teacher-dashboard-title" class="text-base font-bold text-slate-900 leading-tight mt-0.5">Teacher Portal</h1>
+                                <span class="text-xs font-bold tracking-wider text-indigo-600 uppercase block leading-none">Study Manager</span>
+                                <h1 id="teacher-dashboard-title" class="text-lg font-bold text-slate-900 leading-tight mt-0.5">Teacher Portal</h1>
                             </div>
                         </div>
-                        <button type="button" onclick="toggleProfileMenu('teacher-dashboard', event)" title="Account Settings" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition cursor-pointer shrink-0">
+                        <button type="button" onclick="toggleProfileMenu('teacher-dashboard', event)" title="Account Settings" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition cursor-pointer shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -172,76 +172,55 @@
                         </div>
                     </div>
 
-                    <!-- Section: Added Students (Top) -->
-                    <div class="space-y-2.5">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Added students</h2>
-                            <span id="student-count-badge" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">0 Added</span>
+                    <!-- Teacher Welcome & Today's Date / Holiday Card -->
+                    <div id="teacher-welcome-card" class="rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-slate-50 border border-indigo-200/80 p-4 space-y-3 shadow-2xs">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <h2 id="teacher-welcome-name" class="text-base font-bold text-slate-900 truncate">Welcome, Teacher</h2>
+                                <p id="teacher-welcome-designation" class="text-sm font-medium text-indigo-600 mt-0.5">Faculty Member &bull; Teacher</p>
+                            </div>
+                            <span id="teacher-today-status-pill" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0">Working Day</span>
                         </div>
-
-                        <!-- Searchable Dropdown -->
-                        <div id="student-search-dropdown-wrapper" class="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
-                            </svg>
-                            <input id="student-search-input" type="text" onfocus="openStudentSearchDropdown()" oninput="renderStudentSearchDropdown()" placeholder="Search added students..." autocomplete="off" class="w-full pl-9 pr-8 py-2.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-
-                            <!-- Dropdown Options Menu -->
-                            <div id="student-search-dropdown" class="hidden absolute left-0 right-0 mt-1.5 max-h-44 overflow-y-auto no-scrollbar rounded-2xl bg-white border border-slate-200 shadow-lg z-30 py-1">
-                                <div class="px-3.5 py-2.5 text-xs text-slate-400 text-center">No students added yet.</div>
+                        <div class="pt-2.5 border-t border-indigo-100/80 space-y-2">
+                            <div class="flex items-center gap-2 text-sm text-slate-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span id="teacher-today-date" class="font-medium text-slate-700">Today is ...</span>
+                            </div>
+                            <div id="teacher-holiday-banner" class="hidden rounded-xl bg-amber-50 border border-amber-200/90 px-3 py-2 flex items-start gap-2 text-amber-900">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p id="teacher-holiday-text" class="text-xs font-semibold leading-snug"></p>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Show All Added Students Button -->
-                        <button type="button" onclick="openAllAddedStudentsScreen()" class="w-full py-2.5 px-4 rounded-xl bg-indigo-50 hover:bg-indigo-100 active:scale-[0.99] text-indigo-700 font-semibold text-xs border border-indigo-200/80 flex items-center justify-center gap-1.5 transition cursor-pointer">
-                            <span>Show all added students</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <!-- Section: Students (Button navigating to Students screen) -->
+                    <button type="button" onclick="openAllAddedStudentsScreen()" class="w-full p-4 rounded-2xl bg-indigo-50/90 hover:bg-indigo-100/90 active:scale-[0.99] border border-indigo-200/80 shadow-2xs flex items-center justify-between transition cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="text-base font-bold text-slate-900 block leading-tight">Students</span>
+                                <span class="text-xs text-slate-500 block mt-0.5">Add, view &amp; manage enrolled students</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span id="student-count-badge" class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full">0 Added</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                             </svg>
-                        </button>
-                    </div>
-
-                    <!-- Section: Add Students -->
-                    <div class="space-y-2.5">
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Add Students</h2>
-
-                        <div class="rounded-2xl bg-slate-50/90 border border-slate-200/90 p-4 space-y-3 shadow-xs">
-                            <div>
-                                <input id="student-name-input" type="text" oninput="formatTeacherName(this)" placeholder="Name" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
-                            </div>
-
-                            <div>
-                                <input id="student-email-input" type="email" placeholder="Email" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
-                                <p class="text-[11px] text-slate-400 mt-1">Only @gmail.com, @googlemail.com, or Google Workspace domains allowed.</p>
-                            </div>
-
-                            <div>
-                                <div class="grid grid-cols-4 gap-2" id="student-sem-buttons">
-                                    <button type="button" data-sem="I" onclick="selectStudentSemester('I')" class="py-2 rounded-xl bg-indigo-600 text-white border border-indigo-600 text-xs font-bold shadow-xs transition cursor-pointer">I</button>
-                                    <button type="button" data-sem="II" onclick="selectStudentSemester('II')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer">II</button>
-                                    <button type="button" data-sem="III" onclick="selectStudentSemester('III')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer">III</button>
-                                    <button type="button" data-sem="IV" onclick="selectStudentSemester('IV')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer">IV</button>
-                                    <button type="button" data-sem="V" onclick="selectStudentSemester('V')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer">V</button>
-                                    <button type="button" data-sem="VI" onclick="selectStudentSemester('VI')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer">VI</button>
-                                    <button type="button" data-sem="VII" onclick="selectStudentSemester('VII')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer">VII</button>
-                                    <button type="button" data-sem="VIII" onclick="selectStudentSemester('VIII')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer">VIII</button>
-                                </div>
-                            </div>
-
-                            <div id="add-student-feedback" class="hidden"></div>
-
-                            <button type="button" onclick="handleAddStudent()" class="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-semibold text-sm rounded-xl shadow-sm transition cursor-pointer">
-                                Add Student
-                            </button>
                         </div>
-                    </div>
+                    </button>
                 </div>
             </main>
 
-            <!-- SCREEN 2C: All Added Students Directory -->
+            <!-- SCREEN 2C: Students (Add & Manage All Added Students) -->
             <main id="screen-teacher-all-students" class="hidden flex-1 px-6 py-4 flex flex-col justify-between overflow-y-auto no-scrollbar">
                 <div class="space-y-4">
                     <!-- Top Navigation Bar -->
@@ -290,194 +269,137 @@
 
                     <!-- Section Header Below Top Bar -->
                     <div class="flex items-center justify-between pt-0.5">
-                        <h1 class="text-lg font-bold text-slate-900 leading-tight">All Added Students</h1>
-                        <span id="all-students-count-badge" class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">0 Shown</span>
+                        <h1 class="text-xl font-bold text-slate-900 leading-tight">Students</h1>
+                        <span id="all-students-count-badge" class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">0 Shown</span>
                     </div>
 
-                    <!-- Delete Student Confirmation Warning Box (Same styling as Super Admin) -->
-                    <div id="delete-student-warning" class="hidden rounded-2xl bg-amber-50 border border-amber-300/90 p-3.5 space-y-2.5 shadow-xs">
-                        <div class="flex items-start gap-2 text-amber-900">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <!-- Search Bar at Top of Students Screen -->
+                    <div id="student-search-dropdown-wrapper" class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                        </svg>
+                        <input id="student-search-input" type="text" onfocus="openStudentSearchDropdown()" oninput="handleStudentSearchInput()" placeholder="Search added students..." autocomplete="off" class="w-full pl-10 pr-9 py-3 rounded-full bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
+                        <button id="student-search-clear-btn" type="button" onclick="clearStudentSearch()" title="Clear search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        <!-- Quick-Jump Search Dropdown -->
+                        <div id="student-search-dropdown" class="hidden absolute left-0 right-0 mt-1.5 max-h-48 overflow-y-auto no-scrollbar rounded-2xl bg-white border border-slate-200 shadow-lg z-30 py-1">
+                            <div class="px-3.5 py-3 text-sm text-slate-400 text-center">No students added yet.</div>
+                        </div>
+                    </div>
+
+                    <!-- Semester Filter Strip Directly Below Search Bar (None selected by default) -->
+                    <div id="all-students-filter-bar" class="space-y-2">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button type="button" data-filter="ALL" onclick="filterAllStudentsBySemester('ALL')" class="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer">All</button>
+                            <button type="button" data-filter="I" onclick="filterAllStudentsBySemester('I')" class="px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer">I</button>
+                            <button type="button" data-filter="II" onclick="filterAllStudentsBySemester('II')" class="px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer">II</button>
+                            <button type="button" data-filter="III" onclick="filterAllStudentsBySemester('III')" class="px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer">III</button>
+                            <button type="button" data-filter="IV" onclick="filterAllStudentsBySemester('IV')" class="px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer">IV</button>
+                        </div>
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button type="button" data-filter="V" onclick="filterAllStudentsBySemester('V')" class="px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer">V</button>
+                            <button type="button" data-filter="VI" onclick="filterAllStudentsBySemester('VI')" class="px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer">VI</button>
+                            <button type="button" data-filter="VII" onclick="filterAllStudentsBySemester('VII')" class="px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer">VII</button>
+                            <button type="button" data-filter="VIII" onclick="filterAllStudentsBySemester('VIII')" class="px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer">VIII</button>
+                        </div>
+                    </div>
+
+                    <!-- Delete Student Confirmation Warning Box -->
+                    <div id="delete-student-warning" class="hidden rounded-2xl bg-amber-50 border border-amber-300/90 p-4 space-y-3 shadow-xs">
+                        <div class="flex items-start gap-2.5 text-amber-900">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
-                            <p id="delete-student-warning-text" class="text-xs font-medium leading-relaxed"></p>
+                            <p id="delete-student-warning-text" class="text-sm font-medium leading-relaxed"></p>
                         </div>
                         <div class="flex items-center justify-end gap-2">
-                            <button type="button" onclick="cancelDeleteStudent()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 transition cursor-pointer">
+                            <button type="button" onclick="cancelDeleteStudent()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-sm font-semibold border border-slate-200 transition cursor-pointer">
                                 Cancel
                             </button>
-                            <button type="button" onclick="confirmDeleteStudent()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-xs transition cursor-pointer">
+                            <button type="button" onclick="confirmDeleteStudent()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-xs transition cursor-pointer">
                                 Yes, Delete
                             </button>
                         </div>
                     </div>
 
-                    <!-- Semester Filter Strip (Line 1: All + I-IV, Line 2: V-VIII, Centered) -->
-                    <div id="all-students-filter-bar" class="space-y-1.5 pb-1">
-                        <div class="flex items-center justify-center gap-1.5">
-                            <button type="button" data-filter="ALL" onclick="filterAllStudentsBySemester('ALL')" class="px-3.5 py-1.5 rounded-full bg-indigo-600 text-white text-xs font-bold shadow-xs transition cursor-pointer">All</button>
-                            <button type="button" data-filter="I" onclick="filterAllStudentsBySemester('I')" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">I</button>
-                            <button type="button" data-filter="II" onclick="filterAllStudentsBySemester('II')" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">II</button>
-                            <button type="button" data-filter="III" onclick="filterAllStudentsBySemester('III')" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">III</button>
-                            <button type="button" data-filter="IV" onclick="filterAllStudentsBySemester('IV')" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">IV</button>
-                        </div>
-                        <div class="flex items-center justify-center gap-1.5">
-                            <button type="button" data-filter="V" onclick="filterAllStudentsBySemester('V')" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">V</button>
-                            <button type="button" data-filter="VI" onclick="filterAllStudentsBySemester('VI')" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">VI</button>
-                            <button type="button" data-filter="VII" onclick="filterAllStudentsBySemester('VII')" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">VII</button>
-                            <button type="button" data-filter="VIII" onclick="filterAllStudentsBySemester('VIII')" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">VIII</button>
-                        </div>
-                    </div>
+                    <!-- Filtered / Searched Students List (Shown when All, a Semester, or Search is active) -->
+                    <div id="all-students-alphabetical-list" class="hidden space-y-2.5"></div>
 
-                    <!-- Alphabetical Students List -->
-                    <div id="all-students-alphabetical-list" class="space-y-2 pb-4">
-                        <div class="rounded-2xl border border-dashed border-slate-200 py-8 px-4 text-center text-xs text-slate-400">
-                            No students added yet.
+                    <!-- Section: Add Students (Extra top spacing for clear separation) -->
+                    <div class="space-y-3.5 pt-7 pb-6">
+                        <div class="flex items-center gap-2.5 border-b border-slate-200 pb-2">
+                            <span class="w-1.5 h-5 rounded-full bg-indigo-600"></span>
+                            <h2 class="text-base font-bold uppercase tracking-wider text-slate-900">Add Students</h2>
                         </div>
-                    </div>
-                </div>
-            </main>
 
-            <!-- SCREEN 3: Super Admin Login -->
-            <main id="screen-admin" class="hidden flex-1 px-6 py-4 flex flex-col justify-between overflow-y-auto no-scrollbar">
-                <!-- Vertically Centered Header + Form Group -->
-                <div class="my-auto flex flex-col justify-center space-y-8 py-4">
-                    <div class="text-center flex flex-col items-center">
-                        <div class="flex flex-col items-center gap-2.5 mb-5">
-                            <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
+                        <!-- Sub-Header Outside Box: Add Students Page -->
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-slate-800 tracking-tight">Add Students Page</h3>
+                                <span id="sheet-sync-badge" class="hidden text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 shrink-0">Linked</span>
                             </div>
-                            <span class="text-sm font-bold tracking-tight text-indigo-600 uppercase">Study Manager</span>
-                        </div>
-                        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Super Admin</h1>
-                        <p class="text-sm text-slate-500 mt-1">Sign in with your authorized Google Workspace account.</p>
-                    </div>
 
-                    <div class="space-y-4">
-                        <button type="button" onclick="handleAdminGoogleLogin()" class="w-full py-3.5 px-4 bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-800 font-semibold text-sm rounded-2xl border border-slate-200 shadow-sm flex items-center justify-center gap-3 transition cursor-pointer">
-                            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-                                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
-                                <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14z"/>
-                                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96z"/>
-                            </svg>
-                            <span id="google-admin-btn-text">Continue with Google</span>
-                        </button>
-                        <div id="admin-auth-feedback" class="hidden"></div>
-                    </div>
-                </div>
-
-                <div class="text-center pb-2 shrink-0">
-                    <button type="button" onclick="switchScreen('student')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 transition cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        <span>Back to User Login</span>
-                    </button>
-                </div>
-            </main>
-
-            <!-- SCREEN 3B: Super Admin Dashboard -->
-            <main id="screen-admin-dashboard" class="hidden flex-1 px-6 py-4 flex flex-col justify-between overflow-y-auto no-scrollbar">
-                <div class="space-y-5">
-                    <!-- Top App Bar -->
-                    <div class="flex items-center justify-between pt-1 relative">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <span class="text-[10px] font-bold tracking-wider text-indigo-600 uppercase block leading-none">Study Manager</span>
-                                <h1 class="text-base font-bold text-slate-900 leading-tight mt-0.5">Super Admin</h1>
-                            </div>
-                        </div>
-                        <button type="button" onclick="toggleProfileMenu('admin-dashboard', event)" title="Account Settings" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition cursor-pointer shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </button>
-
-                        <!-- Profile & Logout Popover -->
-                        <div id="profile-popover-admin-dashboard" data-profile-popover class="hidden absolute right-0 top-11 w-64 rounded-2xl bg-white border border-slate-200 shadow-xl p-4 z-40 space-y-3">
-                            <div class="space-y-1.5">
-                                <p data-profile-name class="text-sm font-bold text-slate-900 truncate">Director</p>
-                                <p data-profile-email class="text-sm text-slate-600 truncate">director@spmniwas.in</p>
-                                <p class="text-sm text-slate-600">Status: <span data-profile-level class="font-semibold">Super Admin</span></p>
-                            </div>
-                            <div class="border-t border-slate-100 pt-2.5">
-                                <button type="button" data-logout-trigger onclick="promptLogout('admin-dashboard')" class="w-full py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-semibold border border-rose-200/70 transition cursor-pointer">
-                                    Logout
-                                </button>
-                                <div data-logout-warning class="hidden rounded-xl bg-amber-50 border border-amber-300/90 p-2.5 space-y-2">
-                                    <div class="flex items-start gap-1.5 text-amber-900">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            <!-- Google Sheet Import & Continuous Check Form -->
+                            <div class="rounded-2xl bg-indigo-50/60 border border-indigo-200/80 p-4 space-y-3 shadow-2xs">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
-                                        <p class="text-[11px] font-medium leading-snug">Warning: Are you sure you want to logout?</p>
                                     </div>
-                                    <div class="flex items-center justify-end gap-1.5">
-                                        <button type="button" onclick="cancelLogout('admin-dashboard')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 text-[11px] font-semibold border border-slate-200 transition cursor-pointer">Cancel</button>
-                                        <button type="button" onclick="confirmLogout()" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-semibold shadow-2xs transition cursor-pointer">Yes, Logout</button>
+                                    <p class="text-xs font-medium text-slate-600 leading-snug">Google Sheet must be set to <span class="font-semibold text-slate-800">&ldquo;Anyone with the link &rarr; Viewer&rdquo;</span></p>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <input id="student-sheet-url-input" type="url" placeholder="Paste Google Sheet URL..." class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
+                                    <button id="student-sheet-sync-btn" type="button" onclick="handleImportStudentGoogleSheet(true)" class="px-3.5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold shadow-2xs transition cursor-pointer shrink-0">
+                                        Check &amp; Import
+                                    </button>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-snug">Columns expected: <span class="font-semibold text-slate-700">Name, Email, Semester (I–VIII)</span>. Auto-checks on every visit (only adds).</p>
+                                <div id="student-sheet-feedback" class="hidden"></div>
+                            </div>
+                        </div>
+
+                        <!-- Sub-Header Outside Box: Add Individual Student -->
+                        <div class="space-y-2.5 pt-2">
+                            <h3 class="text-sm font-bold text-slate-800 tracking-tight">Add Individual Student</h3>
+
+                            <!-- Individual Student Form -->
+                            <div class="rounded-2xl bg-slate-50/90 border border-slate-200/90 p-4 space-y-3 shadow-xs">
+                                <div>
+                                    <input id="student-name-input" type="text" oninput="formatTeacherName(this)" placeholder="Name" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
+                                </div>
+
+                                <div>
+                                    <input id="student-email-input" type="email" placeholder="Email" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
+                                    <p class="text-xs text-slate-400 mt-1.5">Only @gmail.com, @googlemail.com, or Google Workspace domains allowed.</p>
+                                </div>
+
+                                <div>
+                                    <div class="grid grid-cols-4 gap-2" id="student-sem-buttons">
+                                        <button type="button" data-sem="I" onclick="selectStudentSemester('I')" class="py-2 rounded-xl bg-indigo-600 text-white border border-indigo-600 text-sm font-bold shadow-xs transition cursor-pointer">I</button>
+                                        <button type="button" data-sem="II" onclick="selectStudentSemester('II')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-sm font-bold text-slate-700 transition cursor-pointer">II</button>
+                                        <button type="button" data-sem="III" onclick="selectStudentSemester('III')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-sm font-bold text-slate-700 transition cursor-pointer">III</button>
+                                        <button type="button" data-sem="IV" onclick="selectStudentSemester('IV')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-sm font-bold text-slate-700 transition cursor-pointer">IV</button>
+                                        <button type="button" data-sem="V" onclick="selectStudentSemester('V')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-sm font-bold text-slate-700 transition cursor-pointer">V</button>
+                                        <button type="button" data-sem="VI" onclick="selectStudentSemester('VI')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-sm font-bold text-slate-700 transition cursor-pointer">VI</button>
+                                        <button type="button" data-sem="VII" onclick="selectStudentSemester('VII')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-sm font-bold text-slate-700 transition cursor-pointer">VII</button>
+                                        <button type="button" data-sem="VIII" onclick="selectStudentSemester('VIII')" class="py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-sm font-bold text-slate-700 transition cursor-pointer">VIII</button>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Add Teacher Section -->
-                    <div class="space-y-2.5">
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Add Teacher</h2>
-                        <div id="add-teacher-card" class="rounded-2xl bg-slate-50/90 border border-slate-200/90 p-4 space-y-3.5 shadow-xs">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">Name</label>
-                                <input id="teacher-name-input" type="text" oninput="formatTeacherName(this)" placeholder="Dr. Ananya Sharma" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">Email</label>
-                                <input id="teacher-email-input" type="email" placeholder="ananya@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition" />
-                                <p class="text-[11px] text-slate-400 mt-1">Only @gmail.com, @googlemail.com, or Google Workspace domains allowed.</p>
-                            </div>
+                                <div id="add-student-feedback" class="hidden"></div>
 
-                            <div id="add-teacher-feedback" class="hidden"></div>
-
-                            <button type="button" onclick="handleAddTeacher()" class="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-semibold text-sm rounded-xl shadow-sm transition cursor-pointer">
-                                Add
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Delete Confirmation Warning Box -->
-                    <div id="delete-teacher-warning" class="hidden rounded-2xl bg-amber-50 border border-amber-300/90 p-3.5 space-y-2.5 shadow-xs">
-                        <div class="flex items-start gap-2 text-amber-900">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <p id="delete-warning-text" class="text-xs font-medium leading-relaxed"></p>
-                        </div>
-                        <div class="flex items-center justify-end gap-2">
-                            <button type="button" onclick="cancelDeleteTeacher()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 transition cursor-pointer">
-                                Cancel
-                            </button>
-                            <button type="button" onclick="confirmDeleteTeacher()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-xs transition cursor-pointer">
-                                Yes, Delete
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Added Teachers Section -->
-                    <div class="space-y-2 pt-1 pb-4">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Added teachers</h3>
-                            <span id="teacher-count-badge" class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">0 Added</span>
-                        </div>
-                        <div id="added-teachers-list" class="space-y-2">
-                            <div class="rounded-xl border border-dashed border-slate-200 py-4 px-3 text-center text-xs text-slate-400">
-                                No teachers added yet. Fill in Name &amp; Google Email above.
+                                <div class="flex justify-end pt-0.5">
+                                    <button type="button" onclick="handleAddStudent()" class="py-2.5 px-5 bg-slate-600 hover:bg-slate-700 active:scale-[0.98] text-white font-semibold text-sm rounded-xl shadow-xs transition cursor-pointer">
+                                        Add Student
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -537,16 +459,16 @@
                     <!-- Student Profile Badge -->
                     <div class="rounded-2xl bg-indigo-50/80 border border-indigo-200/80 p-4 flex items-center justify-between">
                         <div class="min-w-0 pr-2">
-                            <p class="text-[11px] font-semibold text-indigo-600 uppercase tracking-wider">Enrolled Student</p>
-                            <p id="student-dashboard-email" class="text-xs text-slate-600 truncate mt-0.5">student@gmail.com</p>
-                            <p class="text-xs text-slate-700 mt-1.5">Added by: <span id="student-dashboard-teacher" class="font-semibold text-slate-900">Teacher</span></p>
+                            <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Enrolled Student</p>
+                            <p id="student-dashboard-email" class="text-sm text-slate-600 truncate mt-0.5">student@gmail.com</p>
+                            <p class="text-sm text-slate-700 mt-1.5">Added by: <span id="student-dashboard-teacher" class="font-semibold text-slate-900">Teacher</span></p>
                         </div>
-                        <span id="student-dashboard-sem" class="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-bold shadow-xs shrink-0">Sem I</span>
+                        <span id="student-dashboard-sem" class="px-3.5 py-1.5 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-xs shrink-0">Sem I</span>
                     </div>
 
-                    <div class="rounded-2xl border border-dashed border-slate-200 py-10 px-4 text-center space-y-1.5">
-                        <p class="text-xs font-semibold text-slate-700">Student Workspace Ready</p>
-                        <p class="text-[11px] text-slate-400">Your semester courses, materials, and updates will appear here.</p>
+                    <div class="rounded-2xl border border-dashed border-slate-200 py-10 px-4 text-center space-y-2">
+                        <p class="text-sm font-semibold text-slate-700">Student Workspace Ready</p>
+                        <p class="text-xs text-slate-400">Your semester courses, materials, and updates will appear here.</p>
                     </div>
                 </div>
             </main>
@@ -662,15 +584,111 @@
                             <div class="space-y-5">
                                 <div class="flex items-center justify-between pt-1">
                                     <div class="flex items-center gap-2.5">
-                                        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                                <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                                                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                                             </svg>
                                         </div>
                                         <div>
-                                            <span class="text-[10px] font-bold tracking-wider text-indigo-600 uppercase block leading-none">Study Manager</span>
-                                            <h1 class="text-base font-bold text-slate-900 leading-tight mt-0.5">Super Admin</h1>
+                                            <span class="text-xs font-bold tracking-wider text-indigo-600 uppercase block leading-none">Study Manager</span>
+                                            <h1 class="text-lg font-bold text-slate-900 leading-tight mt-0.5">Teacher Portal</h1>
                                         </div>
+                                    </div>
+                                    <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Gallery Preview: Welcome & Date/Holiday Card -->
+                                <div class="rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-slate-50 border border-indigo-200/80 p-4 space-y-3 shadow-2xs">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <h2 class="text-base font-bold text-slate-900 truncate">Welcome, Teacher</h2>
+                                            <p class="text-sm font-medium text-indigo-600 mt-0.5">Faculty Member &bull; Teacher</p>
+                                        </div>
+                                        <span id="gallery-teacher-status-pill" class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/80 shrink-0">Holiday</span>
+                                    </div>
+                                    <div class="pt-2.5 border-t border-indigo-100/80 space-y-2">
+                                        <div class="flex items-center gap-2 text-sm text-slate-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <span id="gallery-teacher-date-text" class="font-medium text-slate-700">Today is Saturday, 21 November 2026</span>
+                                        </div>
+                                        <div id="gallery-teacher-holiday-banner" class="rounded-xl bg-amber-50 border border-amber-200/90 px-3 py-2 flex items-start gap-2 text-amber-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <p id="gallery-teacher-holiday-text" class="text-xs font-semibold leading-snug">Today is a holiday: Saturday (Weekly Holiday)</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Gallery Preview: Students Button -->
+                                <div class="w-full p-4 rounded-2xl bg-indigo-50/90 border border-indigo-200/80 shadow-2xs flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                        </div>
+                                        <div class="text-left">
+                                            <span class="text-base font-bold text-slate-900 block leading-tight">Students</span>
+                                            <span class="text-xs text-slate-500 block mt-0.5">Add, view &amp; manage enrolled students</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <span data-gallery-student-count class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full">0 Added</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Home Indicator -->
+                        <div class="w-full pb-2 pt-1 bg-white flex justify-center shrink-0">
+                            <div class="w-32 h-1 bg-slate-900 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TEACHER SCREEN 2: Students (Search, Add & Manage) -->
+                <div class="flex flex-col items-center group">
+                    <div class="mb-3 flex items-center gap-2 text-xs font-medium text-slate-600 bg-white/90 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-xs">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                        <span>2. Students &bull; 375 &times; 812</span>
+                    </div>
+
+                    <div onclick="focusScreenFromGallery('teacher-all-students')" title="Click to interact with Students" class="relative w-[375px] max-w-[92vw] h-[812px] bg-white rounded-[48px] shadow-[0_20px_50px_rgba(15,23,42,0.12)] border-[10px] border-slate-900 overflow-hidden flex flex-col justify-between shrink-0 cursor-pointer transition-all duration-300 group-hover:-translate-y-1.5 group-hover:ring-4 group-hover:ring-indigo-500/30">
+                        <!-- Status Bar -->
+                        <div class="w-full pt-3 pb-2 px-6 flex items-center justify-between bg-white text-slate-900 z-10 select-none">
+                            <span class="text-xs font-semibold tracking-tight">9:41</span>
+                            <div class="w-24 h-6 bg-slate-900 rounded-full"></div>
+                            <div class="flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21L15.6 16.2C14.6 15.45 13.35 15 12 15C10.65 15 9.4 15.45 8.4 16.2L12 21ZM12 3C7.95 3 4.21 4.34 1.2 6.6L3 9C5.5 7.12 8.62 6 12 6C15.38 6 18.5 7.12 21 9L22.8 6.6C19.79 4.34 16.05 3 12 3ZM12 9C9.3 9 6.81 9.89 4.8 11.4L6.6 13.8C8.1 12.67 9.97 12 12 12C14.03 12 15.9 12.67 17.4 13.8L19.2 11.4C17.19 9.89 14.7 9 12 9Z"/></svg>
+                                <div class="w-5 h-2.5 border border-slate-900 rounded-[3px] p-[1px] flex items-center">
+                                    <div class="w-full h-full bg-slate-900 rounded-[1px]"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Preview (Matches screen-teacher-all-students 1-to-1) -->
+                        <div class="flex-1 px-6 py-4 flex flex-col justify-between overflow-hidden bg-white text-slate-900 pointer-events-none">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between pt-1">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-base font-bold tracking-tight text-indigo-600 uppercase leading-none">Study Manager</span>
                                     </div>
                                     <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -680,31 +698,71 @@
                                     </div>
                                 </div>
 
-                                <div class="space-y-2.5">
-                                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Add Teacher</h2>
-                                    <div class="rounded-2xl bg-slate-50/90 border border-slate-200/90 p-4 space-y-3.5 shadow-xs">
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1">Name</label>
-                                            <div class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-400">Dr. Ananya Sharma</div>
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1">Email</label>
-                                            <div class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-400">ananya@gmail.com</div>
-                                            <p class="text-[11px] text-slate-400 mt-1">Only @gmail.com, @googlemail.com, or Google Workspace domains allowed.</p>
-                                        </div>
-                                        <div class="w-full py-3 px-4 bg-slate-900 text-white text-center font-semibold text-sm rounded-xl shadow-sm">
-                                            Add
-                                        </div>
+                                <div class="flex items-center justify-between pt-0.5">
+                                    <h1 class="text-xl font-bold text-slate-900 leading-tight">Students</h1>
+                                    <span data-gallery-students-total class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">0 Total</span>
+                                </div>
+
+                                <!-- Gallery Preview: Search Bar at Top of Students -->
+                                <div class="relative">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                                    </svg>
+                                    <div class="w-full pl-10 pr-9 py-3 rounded-full bg-slate-50 border border-slate-200 text-sm text-slate-400">
+                                        Search added students...
                                     </div>
                                 </div>
 
-                                <div class="space-y-2 pt-1">
-                                    <div class="flex items-center justify-between">
-                                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Added teachers</h3>
-                                        <span class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">0 Added</span>
+                                <!-- Gallery Preview: Filter Pills Below Search Bar -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <span class="px-4 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">All</span>
+                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">I</span>
+                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">II</span>
+                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">III</span>
+                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">IV</span>
                                     </div>
-                                    <div class="rounded-xl border border-dashed border-slate-200 py-4 px-3 text-center text-xs text-slate-400">
-                                        No teachers added yet. Fill in Name &amp; Google Email above.
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">V</span>
+                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">VI</span>
+                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">VII</span>
+                                        <span class="px-3.5 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-bold">VIII</span>
+                                    </div>
+                                </div>
+
+                                <!-- Gallery Preview: Add Students Section -->
+                                <div class="space-y-3.5 pt-7">
+                                    <div class="flex items-center gap-2.5 border-b border-slate-200 pb-2">
+                                        <span class="w-1.5 h-5 rounded-full bg-indigo-600"></span>
+                                        <h2 class="text-base font-bold uppercase tracking-wider text-slate-900">Add Students</h2>
+                                    </div>
+
+                                    <div class="space-y-2.5">
+                                        <h3 class="text-sm font-bold text-slate-800 tracking-tight">Add Students Page</h3>
+                                        <div class="rounded-2xl bg-indigo-50/60 border border-indigo-200/80 p-4 space-y-3 shadow-2xs">
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </div>
+                                                <p class="text-xs font-medium text-slate-600 leading-snug">Google Sheet must be set to <span class="font-semibold text-slate-800">&ldquo;Anyone with the link &rarr; Viewer&rdquo;</span></p>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-400 truncate">Paste Google Sheet URL...</div>
+                                                <div class="px-3.5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold shadow-2xs shrink-0">
+                                                    Check &amp; Import
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-2.5 pt-2">
+                                        <h3 class="text-sm font-bold text-slate-800 tracking-tight">Add Individual Student</h3>
+                                        <div class="rounded-2xl bg-slate-50/90 border border-slate-200/90 p-4 space-y-3 shadow-xs">
+                                            <div class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-base text-slate-400">Name</div>
+                                            <div class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-base text-slate-400">Email</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -720,7 +778,7 @@
 
             <!-- ROLE GROUP: Teacher Screens -->
             <div data-role-group="teacher" class="hidden flex flex-wrap items-start justify-center gap-10">
-                <!-- TEACHER SCREEN 1: Teacher Dashboard (Add Students) -->
+                <!-- TEACHER SCREEN 1: Teacher Dashboard -->
                 <div class="flex flex-col items-center group">
                     <div class="mb-3 flex items-center gap-2 text-xs font-medium text-slate-600 bg-white/90 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-xs">
                         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
@@ -764,50 +822,37 @@
                                     </div>
                                 </div>
 
-                                <!-- Gallery Preview: Added Students -->
-                                <div class="space-y-2">
-                                    <div class="flex items-center justify-between">
-                                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Added students</h2>
-                                        <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">1 Added</span>
-                                    </div>
-                                    <div class="relative">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
-                                        </svg>
-                                        <div class="w-full pl-9 pr-8 py-2 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-400">
-                                            Search added students...
+                                <!-- Gallery Preview: Welcome & Date/Holiday Card -->
+                                <div class="rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-slate-50 border border-indigo-200/80 p-3.5 space-y-2 shadow-2xs">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <p class="text-xs font-bold text-slate-900 truncate">Welcome, Dr. Ananya Sharma</p>
+                                            <p class="text-[11px] font-medium text-indigo-600">Faculty Member &bull; Teacher</p>
                                         </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                                        </svg>
+                                        <span id="gallery-teacher-status-pill" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-800 border border-amber-200/80 shrink-0">Holiday</span>
                                     </div>
-                                    <div class="w-full py-2 px-4 rounded-xl bg-indigo-50 text-indigo-700 font-semibold text-xs border border-indigo-200/80 text-center">
-                                        Show all added students &rarr;
-                                    </div>
+                                    <p id="gallery-teacher-date-text" class="text-[11px] font-medium text-slate-600 pt-1.5 border-t border-indigo-100/80">Today is Saturday, 21 November 2026</p>
+                                    <p id="gallery-teacher-holiday-text" class="text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200/80 rounded-lg px-2.5 py-1.5">Today is a holiday: Saturday (Weekly Holiday)</p>
                                 </div>
 
-                                <!-- Gallery Preview: Add Students -->
-                                <div class="space-y-2">
-                                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Add Students</h2>
-                                    <div class="rounded-2xl bg-slate-50/90 border border-slate-200/90 p-3.5 space-y-2.5 shadow-xs">
-                                        <div class="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-sm text-slate-400">Name</div>
-                                        <div>
-                                            <div class="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-sm text-slate-400">Email</div>
-                                            <p class="text-[11px] text-slate-400 mt-1">Only @gmail.com, @googlemail.com, or Google Workspace domains allowed.</p>
+                                <!-- Gallery Preview: Students Button -->
+                                <div class="w-full p-3.5 rounded-2xl bg-indigo-50/90 border border-indigo-200/80 shadow-2xs flex items-center justify-between">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
                                         </div>
-                                        <div class="grid grid-cols-4 gap-1.5">
-                                            <div class="py-1.5 rounded-xl bg-indigo-600 text-white border border-indigo-600 text-xs font-bold text-center shadow-xs">I</div>
-                                            <div class="py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 text-center">II</div>
-                                            <div class="py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 text-center">III</div>
-                                            <div class="py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 text-center">IV</div>
-                                            <div class="py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 text-center">V</div>
-                                            <div class="py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 text-center">VI</div>
-                                            <div class="py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 text-center">VII</div>
-                                            <div class="py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 text-center">VIII</div>
+                                        <div class="text-left">
+                                            <span class="text-xs font-bold text-slate-900 block leading-tight">Students</span>
+                                            <span class="text-[10px] text-slate-500 block mt-0.5">Add, view &amp; manage enrolled students</span>
                                         </div>
-                                        <div class="w-full py-2.5 px-4 bg-slate-900 text-white text-center font-semibold text-sm rounded-xl shadow-sm">
-                                            Add Student
-                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full">2 Added</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                        </svg>
                                     </div>
                                 </div>
                             </div>
@@ -820,14 +865,14 @@
                     </div>
                 </div>
 
-                <!-- TEACHER SCREEN 2: All Added Students -->
+                <!-- TEACHER SCREEN 2: Students (Search, Add & Manage) -->
                 <div class="flex flex-col items-center group">
                     <div class="mb-3 flex items-center gap-2 text-xs font-medium text-slate-600 bg-white/90 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-xs">
                         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                        <span>2. All Added Students &bull; 375 &times; 812</span>
+                        <span>2. Students &bull; 375 &times; 812</span>
                     </div>
 
-                    <div onclick="focusScreenFromGallery('teacher-all-students')" title="Click to interact with All Added Students" class="relative w-[375px] max-w-[92vw] h-[812px] bg-white rounded-[48px] shadow-[0_20px_50px_rgba(15,23,42,0.12)] border-[10px] border-slate-900 overflow-hidden flex flex-col justify-between shrink-0 cursor-pointer transition-all duration-300 group-hover:-translate-y-1.5 group-hover:ring-4 group-hover:ring-indigo-500/30">
+                    <div onclick="focusScreenFromGallery('teacher-all-students')" title="Click to interact with Students" class="relative w-[375px] max-w-[92vw] h-[812px] bg-white rounded-[48px] shadow-[0_20px_50px_rgba(15,23,42,0.12)] border-[10px] border-slate-900 overflow-hidden flex flex-col justify-between shrink-0 cursor-pointer transition-all duration-300 group-hover:-translate-y-1.5 group-hover:ring-4 group-hover:ring-indigo-500/30">
                         <!-- Status Bar -->
                         <div class="w-full pt-3 pb-2 px-6 flex items-center justify-between bg-white text-slate-900 z-10 select-none">
                             <span class="text-xs font-semibold tracking-tight">9:41</span>
@@ -842,7 +887,7 @@
 
                         <!-- Content Preview -->
                         <div class="flex-1 px-6 py-4 flex flex-col justify-between overflow-hidden bg-white text-slate-900 pointer-events-none">
-                            <div class="space-y-4">
+                            <div class="space-y-3">
                                 <div class="flex items-center justify-between pt-1">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
@@ -860,119 +905,73 @@
                                     </div>
                                 </div>
 
-                                <div class="flex items-center justify-between pt-0.5">
-                                    <h1 class="text-lg font-bold text-slate-900 leading-tight">All Added Students</h1>
-                                    <span class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">2 Shown</span>
+                                <div class="flex items-center justify-between">
+                                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Students</h1>
+                                    <span class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Select Filter</span>
                                 </div>
 
-                                <div class="space-y-1.5">
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <span class="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-bold">All</span>
-                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">I</span>
-                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">II</span>
-                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">III</span>
-                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">IV</span>
-                                    </div>
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">V</span>
-                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">VI</span>
-                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">VII</span>
-                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">VIII</span>
+                                <!-- Gallery Preview: Search Bar at Top of Students -->
+                                <div class="relative">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                                    </svg>
+                                    <div class="w-full pl-8 pr-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-400">
+                                        Search added students...
                                     </div>
                                 </div>
 
-                                <div class="space-y-2">
-                                    <div class="px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between">
-                                        <span class="text-xs font-bold text-slate-900">Aarav Sen - III</span>
-                                        <div class="flex items-center gap-1.5 shrink-0">
-                                            <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">Sem III</span>
-                                            <span class="p-1.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200/70 inline-flex items-center justify-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </span>
+                                <!-- Gallery Preview: Filter Pills Below Search Bar (None selected by default) -->
+                                <div class="space-y-1">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">All</span>
+                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">I</span>
+                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">II</span>
+                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">III</span>
+                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">IV</span>
+                                    </div>
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">V</span>
+                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">VI</span>
+                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">VII</span>
+                                        <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">VIII</span>
+                                    </div>
+                                </div>
+
+                                <!-- Gallery Preview: Add Students Form -->
+                                <div class="space-y-2 pt-0.5">
+                                    <div class="flex items-center gap-1.5 border-b border-slate-200 pb-1">
+                                        <span class="w-1 h-3.5 rounded-full bg-indigo-600"></span>
+                                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900">Add Students</h2>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[11px] font-bold text-slate-800">Add Students Page</p>
+                                        <div class="rounded-2xl bg-indigo-50/60 border border-indigo-200/80 p-2.5 space-y-1.5">
+                                            <div class="flex items-center gap-1">
+                                                <div class="flex-1 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-[10px] text-slate-400 truncate">Paste Google Sheet URL...</div>
+                                                <div class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white text-[10px] font-semibold">Import</div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between">
-                                        <span class="text-xs font-bold text-slate-900">Soma Mandal - VII</span>
-                                        <div class="flex items-center gap-1.5 shrink-0">
-                                            <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">Sem VII</span>
-                                            <span class="p-1.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200/70 inline-flex items-center justify-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </span>
+                                    <p class="text-[11px] font-bold text-slate-800 pt-0.5">Add Individual Student</p>
+                                    <div class="rounded-2xl bg-slate-50/90 border border-slate-200/90 p-3 space-y-2 shadow-xs">
+                                        <div class="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-400">Name</div>
+                                        <div class="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-400">Email</div>
+                                        <div class="grid grid-cols-4 gap-1">
+                                            <div class="py-1 rounded-lg bg-indigo-600 text-white text-[11px] font-bold text-center">I</div>
+                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">II</div>
+                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">III</div>
+                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">IV</div>
+                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">V</div>
+                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">VI</div>
+                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">VII</div>
+                                            <div class="py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 text-center">VIII</div>
+                                        </div>
+                                        <div class="flex justify-end">
+                                            <div class="py-1.5 px-3.5 bg-slate-600 text-white text-center font-semibold text-xs rounded-xl">
+                                                Add Student
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Home Indicator -->
-                        <div class="w-full pb-2 pt-1 bg-white flex justify-center shrink-0">
-                            <div class="w-32 h-1 bg-slate-900 rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ROLE GROUP: Student Screens -->
-            <div data-role-group="student" class="hidden flex flex-wrap items-start justify-center gap-10">
-                <!-- STUDENT SCREEN 1: Student Dashboard -->
-                <div class="flex flex-col items-center group">
-                    <div class="mb-3 flex items-center gap-2 text-xs font-medium text-slate-600 bg-white/90 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-xs">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span>Student Dashboard &bull; 375 &times; 812</span>
-                    </div>
-
-                    <div onclick="focusScreenFromGallery('student-dashboard')" title="Click to interact with Student Dashboard" class="relative w-[375px] max-w-[92vw] h-[812px] bg-white rounded-[48px] shadow-[0_20px_50px_rgba(15,23,42,0.12)] border-[10px] border-slate-900 overflow-hidden flex flex-col justify-between shrink-0 cursor-pointer transition-all duration-300 group-hover:-translate-y-1.5 group-hover:ring-4 group-hover:ring-indigo-500/30">
-                        <!-- Status Bar -->
-                        <div class="w-full pt-3 pb-2 px-6 flex items-center justify-between bg-white text-slate-900 z-10 select-none">
-                            <span class="text-xs font-semibold tracking-tight">9:41</span>
-                            <div class="w-24 h-6 bg-slate-900 rounded-full"></div>
-                            <div class="flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21L15.6 16.2C14.6 15.45 13.35 15 12 15C10.65 15 9.4 15.45 8.4 16.2L12 21ZM12 3C7.95 3 4.21 4.34 1.2 6.6L3 9C5.5 7.12 8.62 6 12 6C15.38 6 18.5 7.12 21 9L22.8 6.6C19.79 4.34 16.05 3 12 3ZM12 9C9.3 9 6.81 9.89 4.8 11.4L6.6 13.8C8.1 12.67 9.97 12 12 12C14.03 12 15.9 12.67 17.4 13.8L19.2 11.4C17.19 9.89 14.7 9 12 9Z"/></svg>
-                                <div class="w-5 h-2.5 border border-slate-900 rounded-[3px] p-[1px] flex items-center">
-                                    <div class="w-full h-full bg-slate-900 rounded-[1px]"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Content Preview -->
-                        <div class="flex-1 px-6 py-4 flex flex-col justify-between overflow-hidden bg-white text-slate-900 pointer-events-none">
-                            <div class="space-y-5">
-                                <div class="flex items-center justify-between pt-1">
-                                    <div class="flex items-center gap-2.5">
-                                        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <span class="text-[10px] font-bold tracking-wider text-indigo-600 uppercase block leading-none">Study Manager</span>
-                                            <h1 class="text-base font-bold text-slate-900 leading-tight mt-0.5">Student Portal</h1>
-                                        </div>
-                                    </div>
-                                    <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <div class="rounded-2xl bg-indigo-50/80 border border-indigo-200/80 p-4 flex items-center justify-between">
-                                    <div class="min-w-0 pr-2">
-                                        <p class="text-[11px] font-semibold text-indigo-600 uppercase tracking-wider">Enrolled Student</p>
-                                        <p class="text-xs text-slate-600 truncate mt-0.5">student@gmail.com</p>
-                                        <p class="text-xs text-slate-700 mt-1.5">Added by: <span class="font-semibold text-slate-900">Dr. Ananya Sharma</span></p>
-                                    </div>
-                                    <span class="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-bold shadow-xs shrink-0">Sem I</span>
-                                </div>
-
-                                <div class="rounded-2xl border border-dashed border-slate-200 py-10 px-4 text-center space-y-1.5">
-                                    <p class="text-xs font-semibold text-slate-700">Student Workspace Ready</p>
-                                    <p class="text-[11px] text-slate-400">Your semester courses, materials, and updates will appear here.</p>
                                 </div>
                             </div>
                         </div>
@@ -1048,7 +1047,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Your web app's Firebase configuration (teacher-study-manager)
         const userFirebaseConfig = {
@@ -1280,56 +1279,58 @@
         const SUPER_ADMIN_EMAIL = 'director@spmniwas.in';
         let currentUserSession = null;
         let selectedStudentSem = 'I';
-        let activeStudentFilterSem = 'ALL';
+        let activeStudentFilterSem = null;
         let pendingDeleteTeacherId = null;
         let pendingDeleteStudentId = null;
+        let linkedStudentSheetUrl = '';
+        let addStudentFeedbackTimer = null;
 
-        /**
-         * Detects if running in Production (e.g., GitHub Pages / standalone host) vs Design Canvas.
-         * In Production, hides All Screens gallery & switcher and opens directly into the mobile frame.
-         */
-        function applyEnvironmentMode() {
+        function isDesignStudioMode() {
             const params = new URLSearchParams(window.location.search);
-            const forceDesign = params.get('design') === 'true';
-            const forceProd = params.get('prod') === 'true';
-            const isPreviewIframe = window.self !== window.top && window.location.hostname === '';
-            const isProduction = forceProd || (!forceDesign && !isPreviewIframe && !window.location.hostname.includes('usercontent'));
+            if (params.get('design') === 'true') return true;
+            if (params.get('production') === 'true') return false;
+            const host = window.location.hostname || '';
+            return host === 'localhost' || host === '127.0.0.1' || host.includes('usercontent') || host.includes('webcontainer') || host === '';
+        }
 
+        function applyEnvironmentMode() {
+            const isDesign = isDesignStudioMode();
             const singleView = document.getElementById('single-view-container');
             const galleryView = document.getElementById('all-screens-gallery');
-            const dropdownWrapper = document.getElementById('all-screens-dropdown-wrapper');
-
-            if (isProduction) {
-                document.body.classList.add('production-mode');
-                if (galleryView) galleryView.classList.add('hidden');
-                if (dropdownWrapper) dropdownWrapper.classList.add('hidden');
-                if (singleView) singleView.classList.remove('hidden');
-                window.switchScreen('login');
-            } else {
+            if (isDesign) {
                 document.body.classList.remove('production-mode');
                 if (singleView) singleView.classList.add('hidden');
                 if (galleryView) galleryView.classList.remove('hidden');
-                if (dropdownWrapper) dropdownWrapper.classList.remove('hidden');
+            } else {
+                document.body.classList.add('production-mode');
+                if (galleryView) galleryView.classList.add('hidden');
+                if (singleView) singleView.classList.remove('hidden');
+                switchScreen('login');
             }
         }
 
         function isAllowedGoogleDomain(email) {
-            const parts = email.toLowerCase().trim().split('@');
-            if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
-            const domain = parts[1];
-            const blockedConsumer = ['yahoo.com', 'hotmail.com', 'outlook.com', 'live.com', 'icloud.com', 'aol.com', 'proton.me', 'protonmail.com', 'rediffmail.com'];
-            return !blockedConsumer.includes(domain) && domain.includes('.');
+            if (!email || !email.includes('@')) return false;
+            const domain = email.split('@')[1].toLowerCase().trim();
+            return domain.length > 2 && domain.includes('.');
+        }
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
         function showFeedback(elId, type, message) {
             const el = document.getElementById(elId);
             if (!el) return;
-            const styles = {
-                error: 'bg-rose-50 border-rose-200 text-rose-700',
-                success: 'bg-emerald-50 border-emerald-200 text-emerald-700',
-                info: 'bg-indigo-50 border-indigo-200 text-indigo-700'
-            };
-            el.className = `rounded-xl border px-3.5 py-2.5 text-xs font-medium ${styles[type] || styles.info}`;
+            const styles = type === 'success'
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                : 'bg-rose-50 text-rose-700 border-rose-200';
+            el.className = `rounded-xl border px-3.5 py-2.5 text-sm font-medium ${styles}`;
             el.textContent = message;
             el.classList.remove('hidden');
         }
@@ -1339,13 +1340,27 @@
             if (el) el.classList.add('hidden');
         }
 
+        window.formatTeacherName = function (inputEl) {
+            if (!inputEl) return;
+            const start = inputEl.selectionStart;
+            const formatted = inputEl.value.replace(/\b([a-zA-Z])/g, (m) => m.toUpperCase());
+            if (inputEl.value !== formatted) {
+                inputEl.value = formatted;
+                if (typeof start === 'number') inputEl.setSelectionRange(start, start);
+            }
+        };
+
         window.switchScreen = function (screenKey) {
+            const singleView = document.getElementById('single-view-container');
+            const galleryView = document.getElementById('all-screens-gallery');
+            if (galleryView) galleryView.classList.add('hidden');
+            if (singleView) singleView.classList.remove('hidden');
+
             const screens = [
                 'screen-login',
+                'screen-admin-dashboard',
                 'screen-teacher-dashboard',
                 'screen-teacher-all-students',
-                'screen-admin',
-                'screen-admin-dashboard',
                 'screen-student-dashboard'
             ];
             screens.forEach((id) => {
@@ -1353,31 +1368,32 @@
                 if (el) el.classList.add('hidden');
             });
 
-            const target = document.getElementById(`screen-${screenKey}`);
-            if (target) target.classList.remove('hidden');
-
-            const singleView = document.getElementById('single-view-container');
-            const galleryView = document.getElementById('all-screens-gallery');
-            if (singleView) singleView.classList.remove('hidden');
-            if (galleryView) galleryView.classList.add('hidden');
+            const targetId = screenKey.startsWith('screen-') ? screenKey : `screen-${screenKey}`;
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) targetEl.classList.remove('hidden');
 
             const labels = {
-                'login': 'Common Login • 375 × 812 px',
-                'admin-dashboard': 'Super Admin • 375 × 812 px',
-                'teacher-dashboard': 'Teacher Portal • 375 × 812 px',
-                'teacher-all-students': 'All Added Students • 375 × 812 px',
-                'student-dashboard': 'Student Portal • 375 × 812 px'
+                'screen-login': 'Common Login • 375 × 812 px',
+                'screen-admin-dashboard': 'Super Admin • 375 × 812 px',
+                'screen-teacher-dashboard': 'Teacher Dashboard • 375 × 812 px',
+                'screen-teacher-all-students': 'Students • 375 × 812 px',
+                'screen-student-dashboard': 'Student Portal • 375 × 812 px'
             };
             const indicator = document.getElementById('screen-indicator');
-            if (indicator && labels[screenKey]) {
-                indicator.textContent = labels[screenKey];
-            }
+            if (indicator) indicator.textContent = labels[targetId] || 'Study Manager • 375 × 812 px';
 
-            closeAllProfileMenus();
+            if (targetId === 'screen-teacher-dashboard') {
+                updateTeacherWelcomeSection();
+            } else if (targetId === 'screen-teacher-all-students') {
+                renderAllStudentsScreen();
+                if (linkedStudentSheetUrl) {
+                    window.handleImportStudentGoogleSheet(false);
+                }
+            }
         };
 
         window.focusScreenFromGallery = function (screenKey) {
-            window.switchScreen(screenKey);
+            switchScreen(screenKey);
         };
 
         window.toggleScreensDropdown = function () {
@@ -1386,17 +1402,22 @@
             if (!menu) return;
             const isHidden = menu.classList.contains('hidden');
             menu.classList.toggle('hidden', !isHidden);
-            if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+            if (chevron) chevron.classList.toggle('rotate-180', isHidden);
         };
 
         window.selectUserRoleFromDropdown = function (roleKey) {
+            const menu = document.getElementById('user-roles-dropdown');
+            const chevron = document.getElementById('dropdown-chevron');
+            if (menu) menu.classList.add('hidden');
+            if (chevron) chevron.classList.remove('rotate-180');
+
             const singleView = document.getElementById('single-view-container');
             const galleryView = document.getElementById('all-screens-gallery');
             if (singleView) singleView.classList.add('hidden');
             if (galleryView) galleryView.classList.remove('hidden');
 
-            document.querySelectorAll('[data-role-group]').forEach((group) => {
-                group.classList.toggle('hidden', group.getAttribute('data-role-group') !== roleKey);
+            document.querySelectorAll('[data-role-group]').forEach((grp) => {
+                grp.classList.toggle('hidden', grp.getAttribute('data-role-group') !== roleKey);
             });
 
             const roleNames = {
@@ -1406,275 +1427,198 @@
                 student: 'Student'
             };
             const pill = document.getElementById('active-role-pill');
-            if (pill) pill.textContent = roleNames[roleKey] || 'Common Login';
-
             const title = document.getElementById('role-gallery-title');
-            if (title) title.textContent = `${roleNames[roleKey] || 'Common Login'} Screen${roleKey === 'teacher' ? 's' : ''}`;
-
-            ['login', 'admin', 'teacher', 'student'].forEach((key) => {
-                const item = document.getElementById(`dropdown-item-${key}`);
-                if (!item) return;
-                if (key === roleKey) {
-                    item.classList.add('bg-indigo-50', 'text-indigo-700');
-                    item.classList.remove('text-slate-700');
-                } else {
-                    item.classList.remove('bg-indigo-50', 'text-indigo-700');
-                    item.classList.add('text-slate-700');
-                }
-            });
-
-            const menu = document.getElementById('user-roles-dropdown');
-            const chevron = document.getElementById('dropdown-chevron');
-            if (menu) menu.classList.add('hidden');
-            if (chevron) chevron.style.transform = 'rotate(0deg)';
+            if (pill) pill.textContent = roleNames[roleKey] || 'Common Login';
+            if (title) title.textContent = `${roleNames[roleKey] || 'Common Login'} Screens`;
         };
 
-        function updateProfilePopovers(name, email, level) {
-            document.querySelectorAll('[data-profile-name]').forEach((el) => (el.textContent = name));
-            document.querySelectorAll('[data-profile-email]').forEach((el) => (el.textContent = email));
-            document.querySelectorAll('[data-profile-level]').forEach((el) => (el.textContent = level));
-        }
-
-        function closeAllProfileMenus() {
-            document.querySelectorAll('[data-profile-popover]').forEach((p) => p.classList.add('hidden'));
-            document.querySelectorAll('[data-logout-warning]').forEach((w) => w.classList.add('hidden'));
-            document.querySelectorAll('[data-logout-trigger]').forEach((b) => b.classList.remove('hidden'));
-        }
-
-        window.toggleProfileMenu = function (screenId, event) {
+        window.toggleProfileMenu = function (contextKey, event) {
             if (event) event.stopPropagation();
-            const popover = document.getElementById(`profile-popover-${screenId}`);
-            if (!popover) return;
-            const willOpen = popover.classList.contains('hidden');
-            closeAllProfileMenus();
-            if (willOpen) popover.classList.remove('hidden');
+            const targetPopover = document.getElementById(`profile-popover-${contextKey}`);
+            document.querySelectorAll('[data-profile-popover]').forEach((pop) => {
+                if (pop !== targetPopover) pop.classList.add('hidden');
+            });
+            if (targetPopover) {
+                targetPopover.classList.toggle('hidden');
+                cancelLogout(contextKey);
+            }
         };
 
-        window.promptLogout = function (screenId) {
-            const popover = document.getElementById(`profile-popover-${screenId}`);
-            if (!popover) return;
-            const trigger = popover.querySelector('[data-logout-trigger]');
-            const warning = popover.querySelector('[data-logout-warning]');
+        window.promptLogout = function (contextKey) {
+            const pop = document.getElementById(`profile-popover-${contextKey}`);
+            if (!pop) return;
+            const trigger = pop.querySelector('[data-logout-trigger]');
+            const warning = pop.querySelector('[data-logout-warning]');
             if (trigger) trigger.classList.add('hidden');
             if (warning) warning.classList.remove('hidden');
         };
 
-        window.cancelLogout = function (screenId) {
-            const popover = document.getElementById(`profile-popover-${screenId}`);
-            if (!popover) return;
-            const trigger = popover.querySelector('[data-logout-trigger]');
-            const warning = popover.querySelector('[data-logout-warning]');
+        window.cancelLogout = function (contextKey) {
+            const pop = document.getElementById(`profile-popover-${contextKey}`);
+            if (!pop) return;
+            const trigger = pop.querySelector('[data-logout-trigger]');
+            const warning = pop.querySelector('[data-logout-warning]');
             if (warning) warning.classList.add('hidden');
             if (trigger) trigger.classList.remove('hidden');
         };
 
         window.confirmLogout = function () {
             currentUserSession = null;
-            closeAllProfileMenus();
+            document.querySelectorAll('[data-profile-popover]').forEach((pop) => pop.classList.add('hidden'));
             hideFeedback('common-auth-feedback');
-            window.switchScreen('login');
+            switchScreen('login');
         };
 
-        function routeAuthenticatedEmail(email, displayName) {
-            const normalizedEmail = (email || '').toLowerCase().trim();
-            if (!normalizedEmail) return;
+        function updateProfilePopovers(session) {
+            if (!session) return;
+            document.querySelectorAll('[data-profile-name]').forEach((el) => { el.textContent = session.name; });
+            document.querySelectorAll('[data-profile-email]').forEach((el) => { el.textContent = session.email; });
+            document.querySelectorAll('[data-profile-level]').forEach((el) => { el.textContent = session.roleLabel; });
+        }
 
-            // 1. Check Super Admin
-            if (normalizedEmail === SUPER_ADMIN_EMAIL) {
-                currentUserSession = { role: 'Super Admin', name: displayName || 'Director', email: normalizedEmail };
-                updateProfilePopovers(currentUserSession.name, currentUserSession.email, 'Super Admin');
-                window.renderAddedTeachers();
-                window.switchScreen('admin-dashboard');
+        function updateTeacherWelcomeSection() {
+            const teacherName = (currentUserSession && currentUserSession.name) ? currentUserSession.name : 'Teacher';
+            const welcomeNameEl = document.getElementById('teacher-welcome-name');
+            const todayDateEl = document.getElementById('teacher-today-date');
+            const statusPillEl = document.getElementById('teacher-today-status-pill');
+            const holidayBannerEl = document.getElementById('teacher-holiday-banner');
+            const holidayTextEl = document.getElementById('teacher-holiday-text');
+
+            if (welcomeNameEl) welcomeNameEl.textContent = `Welcome, ${teacherName}`;
+
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('en-IN', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            if (todayDateEl) todayDateEl.textContent = `Today is ${formattedDate}`;
+
+            const holidayInfo = window.checkHoliday2026(now);
+            if (holidayInfo.isHoliday) {
+                if (statusPillEl) {
+                    statusPillEl.textContent = 'Holiday';
+                    statusPillEl.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/80 shrink-0';
+                }
+                if (holidayTextEl) holidayTextEl.textContent = `Today is a holiday: ${holidayInfo.reason}`;
+                if (holidayBannerEl) holidayBannerEl.classList.remove('hidden');
+            } else {
+                if (statusPillEl) {
+                    statusPillEl.textContent = 'Working Day';
+                    statusPillEl.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0';
+                }
+                if (holidayBannerEl) holidayBannerEl.classList.add('hidden');
+            }
+
+            const countBadge = document.getElementById('student-count-badge');
+            if (countBadge) {
+                countBadge.textContent = `${window.addedStudents.length} Added`;
+            }
+        }
+
+        async function loadTeacherSheetPreference(teacherEmail) {
+            if (!db || !teacherEmail) return;
+            try {
+                const prefId = teacherEmail.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                const prefSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teacher_prefs', prefId));
+                if (prefSnap.exists() && prefSnap.data().sheetUrl) {
+                    linkedStudentSheetUrl = prefSnap.data().sheetUrl;
+                    const inputEl = document.getElementById('student-sheet-url-input');
+                    const badgeEl = document.getElementById('sheet-sync-badge');
+                    if (inputEl) inputEl.value = linkedStudentSheetUrl;
+                    if (badgeEl) badgeEl.classList.remove('hidden');
+                    await window.handleImportStudentGoogleSheet(false);
+                }
+            } catch (err) {
+                console.warn('Could not load sheet preference:', err.message);
+            }
+        }
+
+        async function routeAuthenticatedEmail(email, displayName) {
+            const cleanEmail = (email || '').toLowerCase().trim();
+            if (!cleanEmail) return;
+
+            if (cleanEmail === SUPER_ADMIN_EMAIL) {
+                currentUserSession = {
+                    email: cleanEmail,
+                    name: displayName || 'Director (Super Admin)',
+                    role: 'admin',
+                    roleLabel: 'Super Admin'
+                };
+                updateProfilePopovers(currentUserSession);
+                switchScreen('admin-dashboard');
                 return;
             }
 
-            // 2. Check Authorized Teacher
-            const matchedTeacher = window.addedTeachers.find(
-                (t) => (t.email || '').toLowerCase().trim() === normalizedEmail
-            );
+            const matchedTeacher = window.addedTeachers.find((t) => (t.email || '').toLowerCase() === cleanEmail);
             if (matchedTeacher) {
-                currentUserSession = { role: 'Teacher', name: matchedTeacher.name || displayName || 'Teacher', email: normalizedEmail };
-                updateProfilePopovers(currentUserSession.name, currentUserSession.email, 'Teacher');
-                const titleEl = document.getElementById('teacher-dashboard-title');
-                if (titleEl) titleEl.textContent = currentUserSession.name;
-                window.renderStudentSearchDropdown();
-                window.switchScreen('teacher-dashboard');
+                currentUserSession = {
+                    email: cleanEmail,
+                    name: matchedTeacher.name || displayName || 'Teacher',
+                    role: 'teacher',
+                    roleLabel: 'Teacher'
+                };
+                updateProfilePopovers(currentUserSession);
+                switchScreen('teacher-dashboard');
+                await loadTeacherSheetPreference(cleanEmail);
                 return;
             }
 
-            // 3. Check Authorized Student (strictly added by a teacher)
-            const matchedStudent = window.addedStudents.find(
-                (s) => (s.email || '').toLowerCase().trim() === normalizedEmail
-            );
+            const matchedStudent = window.addedStudents.find((s) => (s.email || '').toLowerCase() === cleanEmail);
             if (matchedStudent) {
                 currentUserSession = {
-                    role: 'Student',
+                    email: cleanEmail,
                     name: matchedStudent.name || displayName || 'Student',
-                    email: normalizedEmail,
-                    semester: matchedStudent.semester || 'I',
-                    addedBy: matchedStudent.addedBy || 'Class Teacher'
+                    role: 'student',
+                    roleLabel: 'Student'
                 };
-                updateProfilePopovers(currentUserSession.name, currentUserSession.email, 'Student');
-                const titleEl = document.getElementById('student-dashboard-title');
+                updateProfilePopovers(currentUserSession);
                 const emailEl = document.getElementById('student-dashboard-email');
                 const teacherEl = document.getElementById('student-dashboard-teacher');
                 const semEl = document.getElementById('student-dashboard-sem');
-                if (titleEl) titleEl.textContent = currentUserSession.name;
-                if (emailEl) emailEl.textContent = currentUserSession.email;
-                if (teacherEl) teacherEl.textContent = currentUserSession.addedBy;
-                if (semEl) semEl.textContent = `Sem ${currentUserSession.semester}`;
-                window.switchScreen('student-dashboard');
+                if (emailEl) emailEl.textContent = cleanEmail;
+                if (teacherEl) teacherEl.textContent = matchedStudent.addedByName || 'Faculty Teacher';
+                if (semEl) semEl.textContent = `Sem ${matchedStudent.semester || 'I'}`;
+                switchScreen('student-dashboard');
                 return;
             }
 
-            // 4. Unauthorized email
-            showFeedback(
-                'common-auth-feedback',
-                'error',
-                `Access denied for ${normalizedEmail}. Ask your Super Admin or Teacher to add your Google email first.`
-            );
+            showFeedback('common-auth-feedback', 'error', `Access denied for ${cleanEmail}. Ask your Super Admin or Teacher to register your email first.`);
         }
 
         window.handleCommonGoogleLogin = async function () {
             hideFeedback('common-auth-feedback');
             const btnText = document.getElementById('common-google-btn-text');
-            if (!auth) {
-                showFeedback('common-auth-feedback', 'error', 'Authentication service is still initializing. Please try again.');
-                return;
-            }
+            if (btnText) btnText.textContent = 'Signing in...';
+
             try {
-                if (btnText) btnText.textContent = 'Signing in with Google...';
+                if (!auth) {
+                    showFeedback('common-auth-feedback', 'error', 'Firebase Authentication is not initialized.');
+                    return;
+                }
                 const provider = new GoogleAuthProvider();
-                provider.setCustomParameters({ prompt: 'select_account' });
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
-                routeAuthenticatedEmail(user.email, user.displayName);
+                await routeAuthenticatedEmail(user.email, user.displayName);
             } catch (err) {
-                if (err.code !== 'auth/popup-closed-by-user') {
-                    showFeedback('common-auth-feedback', 'error', err.message || 'Google Sign-In failed. Please try again.');
-                }
+                showFeedback('common-auth-feedback', 'error', `Sign-in failed: ${err.message}`);
             } finally {
                 if (btnText) btnText.textContent = 'Continue with Google';
             }
         };
 
-        window.formatTeacherName = function (input) {
-            if (!input) return;
-            const cursorPos = input.selectionStart;
-            input.value = input.value.replace(/\b\w/g, (ch) => ch.toUpperCase());
-            if (typeof cursorPos === 'number') {
-                input.setSelectionRange(cursorPos, cursorPos);
-            }
+        window.openAllAddedStudentsScreen = function () {
+            switchScreen('teacher-all-students');
         };
 
-        // Super Admin: Add / Render / Delete Teachers
-        window.handleAddTeacher = async function () {
-            hideFeedback('add-teacher-feedback');
-            const nameInput = document.getElementById('teacher-name-input');
-            const emailInput = document.getElementById('teacher-email-input');
-            const name = (nameInput?.value || '').trim();
-            const email = (emailInput?.value || '').toLowerCase().trim();
-
-            if (!name) {
-                showFeedback('add-teacher-feedback', 'error', 'Please enter the teacher\'s full name.');
-                return;
-            }
-            if (!isAllowedGoogleDomain(email)) {
-                showFeedback('add-teacher-feedback', 'error', 'Please enter a valid @gmail.com or Google Workspace email.');
-                return;
-            }
-            if (email === SUPER_ADMIN_EMAIL || window.addedTeachers.some((t) => t.email === email)) {
-                showFeedback('add-teacher-feedback', 'error', 'This email is already registered.');
-                return;
-            }
-
-            const docId = email.replace(/[^a-z0-9]/g, '_');
-            const teacherObj = { name, email, createdAt: new Date().toISOString() };
-
-            try {
-                if (db) {
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId), teacherObj);
-                } else {
-                    window.addedTeachers.push({ id: docId, ...teacherObj });
-                    window.renderAddedTeachers();
-                }
-                if (nameInput) nameInput.value = '';
-                if (emailInput) emailInput.value = '';
-                showFeedback('add-teacher-feedback', 'success', `${name} added successfully.`);
-            } catch (err) {
-                showFeedback('add-teacher-feedback', 'error', `Could not save teacher: ${err.message}`);
-            }
-        };
-
-        window.renderAddedTeachers = function () {
-            const listEl = document.getElementById('added-teachers-list');
-            const badgeEl = document.getElementById('teacher-count-badge');
-            const sorted = [...window.addedTeachers].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-
-            if (badgeEl) badgeEl.textContent = `${sorted.length} Added`;
-            if (!listEl) return;
-
-            if (sorted.length === 0) {
-                listEl.innerHTML = `<div class="rounded-xl border border-dashed border-slate-200 py-4 px-3 text-center text-xs text-slate-400">No teachers added yet. Fill in Name &amp; Google Email above.</div>`;
-                return;
-            }
-
-            listEl.innerHTML = sorted
-                .map(
-                    (t) => `
-                    <div class="px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between gap-2">
-                        <div class="min-w-0">
-                            <p class="text-xs font-bold text-slate-900 truncate">${t.name}</p>
-                            <p class="text-[11px] text-slate-500 truncate">${t.email}</p>
-                        </div>
-                        <button type="button" onclick="promptDeleteTeacher('${t.id}', '${(t.name || '').replace(/'/g, "\\'")}')" title="Remove Teacher" class="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/70 transition cursor-pointer shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </button>
-                    </div>`
-                )
-                .join('');
-        };
-
-        window.promptDeleteTeacher = function (id, name) {
-            pendingDeleteTeacherId = id;
-            const box = document.getElementById('delete-teacher-warning');
-            const text = document.getElementById('delete-warning-text');
-            if (text) text.textContent = `Warning: Remove ${name} from authorized teachers?`;
-            if (box) box.classList.remove('hidden');
-        };
-
-        window.cancelDeleteTeacher = function () {
-            pendingDeleteTeacherId = null;
-            const box = document.getElementById('delete-teacher-warning');
-            if (box) box.classList.add('hidden');
-        };
-
-        window.confirmDeleteTeacher = async function () {
-            if (!pendingDeleteTeacherId) return;
-            const targetId = pendingDeleteTeacherId;
-            window.cancelDeleteTeacher();
-            try {
-                if (db) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', targetId));
-                } else {
-                    window.addedTeachers = window.addedTeachers.filter((t) => t.id !== targetId);
-                    window.renderAddedTeachers();
-                }
-            } catch (err) {
-                showFeedback('add-teacher-feedback', 'error', `Delete failed: ${err.message}`);
-            }
-        };
-
-        // Teacher: Add / Search / Filter / Delete Students
         window.selectStudentSemester = function (sem) {
             selectedStudentSem = sem;
-            document.querySelectorAll('#student-sem-buttons button').forEach((btn) => {
+            document.querySelectorAll('#student-sem-buttons button[data-sem]').forEach((btn) => {
                 const isSelected = btn.getAttribute('data-sem') === sem;
                 btn.className = isSelected
-                    ? 'py-2 rounded-xl bg-indigo-600 text-white border border-indigo-600 text-xs font-bold shadow-xs transition cursor-pointer'
-                    : 'py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-xs font-bold text-slate-700 transition cursor-pointer';
+                    ? 'py-2 rounded-xl bg-indigo-600 text-white border border-indigo-600 text-sm font-bold shadow-xs transition cursor-pointer'
+                    : 'py-2 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 text-sm font-bold text-slate-700 transition cursor-pointer';
             });
         };
 
@@ -1682,186 +1626,395 @@
             hideFeedback('add-student-feedback');
             const nameInput = document.getElementById('student-name-input');
             const emailInput = document.getElementById('student-email-input');
-            const name = (nameInput?.value || '').trim();
-            const email = (emailInput?.value || '').toLowerCase().trim();
+            const name = (nameInput ? nameInput.value : '').trim();
+            const email = (emailInput ? emailInput.value : '').trim().toLowerCase();
 
             if (!name) {
-                showFeedback('add-student-feedback', 'error', 'Please enter the student\'s full name.');
+                showFeedback('add-student-feedback', 'error', 'Please enter the student name.');
                 return;
             }
             if (!isAllowedGoogleDomain(email)) {
-                showFeedback('add-student-feedback', 'error', 'Please enter a valid @gmail.com or Google Workspace email.');
+                showFeedback('add-student-feedback', 'error', 'Please enter a valid Google email address.');
                 return;
             }
-            if (window.addedStudents.some((s) => s.email === email)) {
-                showFeedback('add-student-feedback', 'error', 'This student email has already been added.');
+            if (window.addedStudents.some((s) => (s.email || '').toLowerCase() === email)) {
+                showFeedback('add-student-feedback', 'error', 'This student email is already added.');
                 return;
             }
 
-            const docId = email.replace(/[^a-z0-9]/g, '_');
-            const addedBy = currentUserSession?.name || 'Teacher';
-            const studentObj = {
+            const studentId = email.replace(/[^a-z0-9]/g, '_');
+            const studentRecord = {
+                id: studentId,
                 name,
                 email,
-                semester: selectedStudentSem,
-                addedBy,
-                addedByEmail: currentUserSession?.email || '',
+                semester: selectedStudentSem || 'I',
+                addedByEmail: (currentUserSession && currentUserSession.email) || '',
+                addedByName: (currentUserSession && currentUserSession.name) || 'Teacher',
                 createdAt: new Date().toISOString()
             };
 
             try {
                 if (db) {
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId), studentObj);
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', studentId), studentRecord);
                 } else {
-                    window.addedStudents.push({ id: docId, ...studentObj });
-                    window.renderStudentSearchDropdown();
-                    window.renderAllStudentsScreen();
+                    window.addedStudents.push(studentRecord);
+                    renderAllStudentsScreen();
                 }
+
                 if (nameInput) nameInput.value = '';
                 if (emailInput) emailInput.value = '';
                 showFeedback('add-student-feedback', 'success', `${name} (Sem ${selectedStudentSem}) added.`);
+                if (addStudentFeedbackTimer) clearTimeout(addStudentFeedbackTimer);
+                addStudentFeedbackTimer = setTimeout(() => {
+                    hideFeedback('add-student-feedback');
+                }, 5000);
             } catch (err) {
                 showFeedback('add-student-feedback', 'error', `Could not save student: ${err.message}`);
             }
         };
 
-        window.openStudentSearchDropdown = function () {
-            const dropdown = document.getElementById('student-search-dropdown');
-            if (dropdown) {
-                window.renderStudentSearchDropdown();
-                dropdown.classList.remove('hidden');
+        function extractGoogleSheetId(url) {
+            const match = String(url || '').match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+            return match ? match[1] : null;
+        }
+
+        function parseCsvRows(csvText) {
+            const rows = [];
+            let row = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < csvText.length; i++) {
+                const char = csvText[i];
+                const next = csvText[i + 1];
+                if (char === '"') {
+                    if (inQuotes && next === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    row.push(current.trim());
+                    current = '';
+                } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && next === '\n') i++;
+                    row.push(current.trim());
+                    if (row.some((cell) => cell !== '')) rows.push(row);
+                    row = [];
+                    current = '';
+                } else {
+                    current += char;
+                }
             }
+            if (current.length > 0 || row.length > 0) {
+                row.push(current.trim());
+                if (row.some((cell) => cell !== '')) rows.push(row);
+            }
+            return rows;
+        }
+
+        function normalizeSemesterToken(raw) {
+            const val = String(raw || '').toUpperCase().replace(/SEMESTER|SEM/g, '').trim();
+            const map = { '1': 'I', '2': 'II', '3': 'III', '4': 'IV', '5': 'V', '6': 'VI', '7': 'VII', '8': 'VIII' };
+            const normalized = map[val] || val;
+            return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'].includes(normalized) ? normalized : 'I';
+        }
+
+        window.handleImportStudentGoogleSheet = async function (isManualTrigger = true) {
+            const urlInput = document.getElementById('student-sheet-url-input');
+            const rawUrl = (urlInput && urlInput.value.trim()) ? urlInput.value.trim() : linkedStudentSheetUrl;
+
+            if (!rawUrl) {
+                if (isManualTrigger) {
+                    showFeedback('student-sheet-feedback', 'error', 'Please paste a Google Sheet URL first.');
+                }
+                return;
+            }
+
+            const sheetId = extractGoogleSheetId(rawUrl);
+            if (!sheetId) {
+                if (isManualTrigger) {
+                    showFeedback('student-sheet-feedback', 'error', 'Invalid Google Sheet link. Copy the full URL from your browser.');
+                }
+                return;
+            }
+
+            const btn = document.getElementById('student-sheet-sync-btn');
+            if (isManualTrigger && btn) btn.textContent = 'Checking...';
+
+            try {
+                const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+                const response = await fetch(csvUrl);
+                const text = await response.text();
+
+                if (!response.ok || text.trim().startsWith('<!DOCTYPE html') || text.includes('ServiceLogin')) {
+                    if (isManualTrigger) {
+                        showFeedback('student-sheet-feedback', 'error', 'Sheet is not publicly viewable. Set Share → Anyone with the link → Viewer.');
+                    }
+                    return;
+                }
+
+                const rows = parseCsvRows(text);
+                if (rows.length < 2) {
+                    if (isManualTrigger) {
+                        showFeedback('student-sheet-feedback', 'error', 'No student rows found. Ensure headers are Name, Email, Semester.');
+                    }
+                    return;
+                }
+
+                const headers = rows[0].map((h) => h.toLowerCase());
+                const nameIdx = headers.findIndex((h) => h.includes('name'));
+                const emailIdx = headers.findIndex((h) => h.includes('email') || h.includes('mail'));
+                const semIdx = headers.findIndex((h) => h.includes('sem'));
+
+                if (nameIdx === -1 || emailIdx === -1) {
+                    if (isManualTrigger) {
+                        showFeedback('student-sheet-feedback', 'error', 'Missing required columns: Name and Email.');
+                    }
+                    return;
+                }
+
+                const existingEmails = new Set(window.addedStudents.map((s) => (s.email || '').toLowerCase()));
+                let addedCount = 0;
+
+                for (let i = 1; i < rows.length; i++) {
+                    const r = rows[i];
+                    const name = (r[nameIdx] || '').trim().replace(/\b([a-zA-Z])/g, (m) => m.toUpperCase());
+                    const email = (r[emailIdx] || '').trim().toLowerCase();
+                    const semester = semIdx !== -1 ? normalizeSemesterToken(r[semIdx]) : 'I';
+
+                    if (!name || !isAllowedGoogleDomain(email) || existingEmails.has(email)) continue;
+
+                    const studentId = email.replace(/[^a-z0-9]/g, '_');
+                    const studentRecord = {
+                        id: studentId,
+                        name,
+                        email,
+                        semester,
+                        addedByEmail: (currentUserSession && currentUserSession.email) || '',
+                        addedByName: (currentUserSession && currentUserSession.name) || 'Teacher',
+                        source: 'google-sheet',
+                        createdAt: new Date().toISOString()
+                    };
+
+                    if (db) {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', studentId), studentRecord);
+                    } else {
+                        window.addedStudents.push(studentRecord);
+                    }
+                    existingEmails.add(email);
+                    addedCount++;
+                }
+
+                linkedStudentSheetUrl = rawUrl;
+                const badgeEl = document.getElementById('sheet-sync-badge');
+                if (badgeEl) badgeEl.classList.remove('hidden');
+
+                if (db && currentUserSession && currentUserSession.email) {
+                    const prefId = currentUserSession.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teacher_prefs', prefId), {
+                        sheetUrl: rawUrl,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+                }
+
+                renderAllStudentsScreen();
+                if (isManualTrigger || addedCount > 0) {
+                    showFeedback(
+                        'student-sheet-feedback',
+                        'success',
+                        addedCount > 0
+                            ? `Sheet verified & synced: ${addedCount} new student(s) added.`
+                            : 'Sheet verified & active. All listed students are already synced.'
+                    );
+                }
+            } catch (err) {
+                if (isManualTrigger) {
+                    showFeedback('student-sheet-feedback', 'error', 'Could not reach Google Sheet. Verify link and public Viewer access.');
+                }
+            } finally {
+                if (isManualTrigger && btn) btn.textContent = 'Check & Import';
+            }
+        };
+
+        window.filterAllStudentsBySemester = function (sem) {
+            activeStudentFilterSem = activeStudentFilterSem === sem ? null : sem;
+            document.querySelectorAll('#all-students-filter-bar button[data-filter]').forEach((btn) => {
+                const isSelected = btn.getAttribute('data-filter') === activeStudentFilterSem;
+                btn.className = isSelected
+                    ? 'px-4 py-2 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-xs transition cursor-pointer'
+                    : 'px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition cursor-pointer';
+            });
+            renderAllStudentsScreen();
+        };
+
+        window.openStudentSearchDropdown = function () {
+            renderStudentSearchDropdown();
+            const dropdown = document.getElementById('student-search-dropdown');
+            if (dropdown) dropdown.classList.remove('hidden');
+        };
+
+        window.handleStudentSearchInput = function () {
+            const input = document.getElementById('student-search-input');
+            const clearBtn = document.getElementById('student-search-clear-btn');
+            const query = (input ? input.value : '').trim();
+            if (clearBtn) clearBtn.classList.toggle('hidden', query.length === 0);
+            renderStudentSearchDropdown();
+            renderAllStudentsScreen();
+        };
+
+        window.clearStudentSearch = function () {
+            const input = document.getElementById('student-search-input');
+            const clearBtn = document.getElementById('student-search-clear-btn');
+            const dropdown = document.getElementById('student-search-dropdown');
+            if (input) input.value = '';
+            if (clearBtn) clearBtn.classList.add('hidden');
+            if (dropdown) dropdown.classList.add('hidden');
+            renderAllStudentsScreen();
         };
 
         window.renderStudentSearchDropdown = function () {
             const dropdown = document.getElementById('student-search-dropdown');
-            const badge = document.getElementById('student-count-badge');
-            const query = (document.getElementById('student-search-input')?.value || '').toLowerCase().trim();
-
-            if (badge) badge.textContent = `${window.addedStudents.length} Added`;
+            const input = document.getElementById('student-search-input');
             if (!dropdown) return;
+            const query = (input ? input.value : '').trim().toLowerCase();
 
-            const filtered = window.addedStudents
-                .filter((s) => (s.name || '').toLowerCase().includes(query) || (s.email || '').toLowerCase().includes(query))
+            const matches = window.addedStudents
+                .filter((s) => !query || (s.name || '').toLowerCase().includes(query) || (s.email || '').toLowerCase().includes(query))
                 .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
-            if (filtered.length === 0) {
-                dropdown.innerHTML = `<div class="px-3.5 py-2.5 text-xs text-slate-400 text-center">${window.addedStudents.length === 0 ? 'No students added yet.' : 'No matching students found.'}</div>`;
+            if (matches.length === 0) {
+                dropdown.innerHTML = `<div class="px-3.5 py-3 text-sm text-slate-400 text-center">${window.addedStudents.length === 0 ? 'No students added yet.' : 'No matching students.'}</div>`;
                 return;
             }
 
-            dropdown.innerHTML = filtered
-                .map(
-                    (s) => `
-                    <div class="px-3.5 py-2 hover:bg-slate-50 flex items-center justify-between gap-2 border-b border-slate-100 last:border-b-0">
-                        <div class="min-w-0">
-                            <p class="text-xs font-semibold text-slate-900 truncate">${s.name}</p>
-                            <p class="text-[10px] text-slate-500 truncate">${s.email}</p>
-                        </div>
-                        <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full shrink-0">Sem ${s.semester}</span>
-                    </div>`
-                )
-                .join('');
+            dropdown.innerHTML = matches.map((s) => `
+                <button type="button" onclick="selectStudentFromSearch('${escapeHtml(s.name)}')" class="w-full px-3.5 py-2.5 text-left hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer">
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-slate-900 truncate">${escapeHtml(s.name)}</p>
+                        <p class="text-xs text-slate-500 truncate">${escapeHtml(s.email)}</p>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold shrink-0">Sem ${escapeHtml(s.semester || 'I')}</span>
+                </button>
+            `).join('');
         };
 
-        window.openAllAddedStudentsScreen = function () {
-            activeStudentFilterSem = 'ALL';
-            window.filterAllStudentsBySemester('ALL');
-            window.switchScreen('teacher-all-students');
+        window.selectStudentFromSearch = function (name) {
+            const input = document.getElementById('student-search-input');
+            const dropdown = document.getElementById('student-search-dropdown');
+            if (input) input.value = name;
+            if (dropdown) dropdown.classList.add('hidden');
+            handleStudentSearchInput();
         };
 
-        window.filterAllStudentsBySemester = function (sem) {
-            activeStudentFilterSem = sem;
-            document.querySelectorAll('#all-students-filter-bar button').forEach((btn) => {
-                const isSelected = btn.getAttribute('data-filter') === sem;
-                btn.className = isSelected
-                    ? 'px-3.5 py-1.5 rounded-full bg-indigo-600 text-white text-xs font-bold shadow-xs transition cursor-pointer'
-                    : 'px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer';
-            });
-            window.renderAllStudentsScreen();
+        window.promptDeleteStudent = function (studentId, studentName) {
+            pendingDeleteStudentId = studentId;
+            const warningBox = document.getElementById('delete-student-warning');
+            const warningText = document.getElementById('delete-student-warning-text');
+            if (warningText) warningText.textContent = `Remove ${studentName} from your added students list?`;
+            if (warningBox) warningBox.classList.remove('hidden');
+        };
+
+        window.cancelDeleteStudent = function () {
+            pendingDeleteStudentId = null;
+            const warningBox = document.getElementById('delete-student-warning');
+            if (warningBox) warningBox.classList.add('hidden');
+        };
+
+        window.confirmDeleteStudent = async function () {
+            if (!pendingDeleteStudentId) return;
+            const idToDelete = pendingDeleteStudentId;
+            cancelDeleteStudent();
+            try {
+                if (db) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', idToDelete));
+                } else {
+                    window.addedStudents = window.addedStudents.filter((s) => s.id !== idToDelete);
+                    renderAllStudentsScreen();
+                }
+            } catch (err) {
+                console.warn('Delete student error:', err.message);
+            }
         };
 
         window.renderAllStudentsScreen = function () {
             const listEl = document.getElementById('all-students-alphabetical-list');
             const badgeEl = document.getElementById('all-students-count-badge');
-            const filtered = window.addedStudents
-                .filter((s) => activeStudentFilterSem === 'ALL' || s.semester === activeStudentFilterSem)
-                .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            const dashboardCountEl = document.getElementById('student-count-badge');
+            const searchInput = document.getElementById('student-search-input');
 
-            if (badgeEl) badgeEl.textContent = `${filtered.length} Shown`;
+            if (dashboardCountEl) {
+                dashboardCountEl.textContent = `${window.addedStudents.length} Added`;
+            }
+            document.querySelectorAll('[data-gallery-student-count]').forEach((el) => {
+                el.textContent = `${window.addedStudents.length} Added`;
+            });
+            document.querySelectorAll('[data-gallery-students-total]').forEach((el) => {
+                el.textContent = `${window.addedStudents.length} Total`;
+            });
+
             if (!listEl) return;
+            const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+            const isFilterOrSearchActive = Boolean(activeStudentFilterSem) || query.length > 0;
 
-            if (filtered.length === 0) {
-                listEl.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-200 py-8 px-4 text-center text-xs text-slate-400">No students found for this selection.</div>`;
+            if (!isFilterOrSearchActive) {
+                listEl.classList.add('hidden');
+                if (badgeEl) badgeEl.textContent = `${window.addedStudents.length} Total`;
                 return;
             }
 
-            listEl.innerHTML = filtered
-                .map(
-                    (s) => `
-                    <div class="px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between gap-2">
-                        <div class="min-w-0">
-                            <p class="text-xs font-bold text-slate-900 truncate">${s.name} - ${s.semester}</p>
-                            <p class="text-[11px] text-slate-500 truncate">${s.email}</p>
-                        </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">Sem ${s.semester}</span>
-                            <button type="button" onclick="promptDeleteStudent('${s.id}', '${(s.name || '').replace(/'/g, "\\'")}')" title="Delete Student" class="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/70 transition cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>`
-                )
-                .join('');
-        };
+            const filtered = window.addedStudents
+                .filter((s) => {
+                    const matchesSem = !activeStudentFilterSem || activeStudentFilterSem === 'ALL' || (s.semester || 'I') === activeStudentFilterSem;
+                    const matchesQuery = !query || (s.name || '').toLowerCase().includes(query) || (s.email || '').toLowerCase().includes(query);
+                    return matchesSem && matchesQuery;
+                })
+                .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
-        window.promptDeleteStudent = function (id, name) {
-            pendingDeleteStudentId = id;
-            const box = document.getElementById('delete-student-warning');
-            const text = document.getElementById('delete-student-warning-text');
-            if (text) text.textContent = `Warning: Remove ${name} from added students?`;
-            if (box) box.classList.remove('hidden');
-        };
+            if (badgeEl) badgeEl.textContent = `${filtered.length} Shown`;
+            listEl.classList.remove('hidden');
 
-        window.cancelDeleteStudent = function () {
-            pendingDeleteStudentId = null;
-            const box = document.getElementById('delete-student-warning');
-            if (box) box.classList.add('hidden');
-        };
-
-        window.confirmDeleteStudent = async function () {
-            if (!pendingDeleteStudentId) return;
-            const targetId = pendingDeleteStudentId;
-            window.cancelDeleteStudent();
-            try {
-                if (db) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', targetId));
-                } else {
-                    window.addedStudents = window.addedStudents.filter((s) => s.id !== targetId);
-                    window.renderStudentSearchDropdown();
-                    window.renderAllStudentsScreen();
-                }
-            } catch (err) {
-                console.warn('Delete student failed:', err.message);
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-200 py-6 px-4 text-center text-sm text-slate-400">No students match this filter.</div>`;
+                return;
             }
+
+            listEl.innerHTML = filtered.map((s) => `
+                <div class="rounded-2xl bg-white border border-slate-200/90 p-3.5 flex items-center justify-between gap-2.5 shadow-2xs">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <p class="text-sm font-bold text-slate-900 truncate">${escapeHtml(s.name)}</p>
+                            <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold shrink-0">Sem ${escapeHtml(s.semester || 'I')}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 truncate mt-0.5">${escapeHtml(s.email)}</p>
+                    </div>
+                    <button type="button" onclick="promptDeleteStudent('${escapeHtml(s.id)}', '${escapeHtml(s.name)}')" title="Remove Student" class="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center transition cursor-pointer shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
         };
 
-        // Close dropdowns when clicking outside
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('[data-profile-popover]')) {
-                closeAllProfileMenus();
+            const dropdownWrapper = document.getElementById('all-screens-dropdown-wrapper');
+            const dropdownMenu = document.getElementById('user-roles-dropdown');
+            const chevron = document.getElementById('dropdown-chevron');
+            if (dropdownWrapper && dropdownMenu && !dropdownWrapper.contains(e.target)) {
+                dropdownMenu.classList.add('hidden');
+                if (chevron) chevron.classList.remove('rotate-180');
             }
+
             const searchWrapper = document.getElementById('student-search-dropdown-wrapper');
             const searchDropdown = document.getElementById('student-search-dropdown');
             if (searchWrapper && searchDropdown && !searchWrapper.contains(e.target)) {
                 searchDropdown.classList.add('hidden');
             }
-            const screensWrapper = document.getElementById('all-screens-dropdown-wrapper');
-            const screensMenu = document.getElementById('user-roles-dropdown');
-            if (screensWrapper && screensMenu && !screensWrapper.contains(e.target)) {
-                screensMenu.classList.add('hidden');
+
+            if (!e.target.closest('[data-profile-popover]') && !e.target.closest('[onclick*="toggleProfileMenu"]')) {
+                document.querySelectorAll('[data-profile-popover]').forEach((pop) => pop.classList.add('hidden'));
             }
         });
 
